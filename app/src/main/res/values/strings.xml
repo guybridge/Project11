@@ -6,4 +6,5 @@
     <string name="board_error">Problem loading boards</string>
     <string name="pin_error">Problem loading pins</string>
     <string name="add_boards">Add some boards</string>
+    <string name="add_pin">Add Pin</string>
 </resources>

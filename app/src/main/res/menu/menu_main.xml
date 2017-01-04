@@ -7,4 +7,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
+    <item
+        android:icon="@mipmap/ic_camera"
+        android:id="@+id/action_add_pin"
+        android:orderInCategory="200"
+        android:title="@string/add_pin"
+        app:showAsAction="always"/>
 </menu>

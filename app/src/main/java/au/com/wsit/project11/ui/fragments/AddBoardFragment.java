@@ -62,6 +62,20 @@ public class AddBoardFragment extends DialogFragment
                 // Start an Intent to take a photo
                // Intent takePhotoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE, )
 
+                String name = boardName.getText().toString().trim();
+                if(name != null)
+                {
+                    callback.onSuccess(name);
+                    dismiss();
+
+                }
+                else
+                {
+                    dismiss();
+                }
+
+
+
             }
         });
 

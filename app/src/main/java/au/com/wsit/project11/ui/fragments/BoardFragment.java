@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import au.com.wsit.project11.models.Board;
 
 public class BoardFragment extends Fragment
 {
+    private static final String TAG = BoardFragment.class.getSimpleName();
     private RecyclerView boardRecycler;
     private RecyclerView.LayoutManager layoutManager;
     private BoardAdapter boardAdapter;
@@ -42,6 +44,7 @@ public class BoardFragment extends Fragment
         layoutManager = new LinearLayoutManager(getContext());
         boardRecycler.setLayoutManager(layoutManager);
         boardAdapter = new BoardAdapter(getContext());
+        boardRecycler.setAdapter(boardAdapter);
 
         getData();
 
@@ -69,6 +72,7 @@ public class BoardFragment extends Fragment
             {
                 if(boards.size() == 0)
                 {
+                    Log.i(TAG, "No boards yet");
                     showEmptyView();
                 }
                 else

@@ -3,6 +3,7 @@ package au.com.wsit.project11.adapters;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,9 @@ import au.com.wsit.project11.models.Pin;
 
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
 {
+    private static final String TAG = BoardAdapter.class.getSimpleName();
     private Context context;
-    private ArrayList<Board> boards;
+    private ArrayList<Board> boards = new ArrayList<>();
 
     public BoardAdapter(Context context)
     {
@@ -40,6 +42,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
 
     public void swap(ArrayList<Board> boards)
     {
+
         if(boards != null)
         {
             this.boards = boards;
@@ -50,8 +53,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        // Get the board
-
         holder.bindViewHolder(boards.get(position));
     }
 
@@ -85,6 +86,16 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
             });
         }
 
+        private void bindViewHolder(Board board)
+        {
+            boardTitle.setText(board.getBoardTitle());
+            Picasso.with(context).load(board.getImageUrl()).placeholder(R.drawable.asset6).into(boardImage);
+            pinRecycler.setLayoutManager(new GridLayoutManager(context, 2));
+            pinAdapter = new PinAdapter(context);
+            pinRecycler.setAdapter(pinAdapter);
+            pinAdapter.swap(board.getBoardPins());
+        }
+
         private void togglePinView()
         {
             if(pinRecycler.getVisibility() == View.GONE)
@@ -95,16 +106,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
             {
                 pinRecycler.setVisibility(View.GONE);
             }
-        }
-
-        private void bindViewHolder(Board board)
-        {
-            boardTitle.setText(board.getBoardTitle());
-            Picasso.with(context).load(board.getImageUrl()).into(boardImage);
-            pinRecycler.setLayoutManager(new GridLayoutManager(context, 2));
-            pinAdapter = new PinAdapter(context);
-            pinRecycler.setAdapter(pinAdapter);
-            pinAdapter.swap(board.getBoardPins());
         }
 
 

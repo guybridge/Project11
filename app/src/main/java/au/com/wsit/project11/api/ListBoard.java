@@ -1,6 +1,7 @@
 package au.com.wsit.project11.api;
 
 import android.text.BoringLayout;
+import android.util.Log;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -21,6 +22,9 @@ import au.com.wsit.project11.utils.Constants;
 
 public class ListBoard
 {
+
+    public static final String TAG = ListBoard.class.getSimpleName();
+
     public interface ListBoardCallback
     {
         void onSuccess(ArrayList<Board> boards);
@@ -32,6 +36,7 @@ public class ListBoard
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery(Constants.BOARDS_CLASS);
         parseQuery.findInBackground(new FindCallback<ParseObject>()
         {
+
             @Override
             public void done(List<ParseObject> objects, ParseException e)
             {
