@@ -22,7 +22,6 @@ import au.com.wsit.project11.models.Pin;
 
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
 {
-    private static final String TAG = BoardAdapter.class.getSimpleName();
     private Context context;
     private ArrayList<Board> boards = new ArrayList<>();
 
