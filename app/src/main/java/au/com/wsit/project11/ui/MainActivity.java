@@ -1,12 +1,16 @@
 package au.com.wsit.project11.ui;
 
+import android.icu.text.TimeZoneFormat;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,14 +19,22 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
+
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.adapters.SectionsPagerAdapter;
+import au.com.wsit.project11.api.ParseBoard;
+import au.com.wsit.project11.ui.fragments.AddBoardFragment;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements AddBoardFragment.AddBoardCallback
 {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private CoordinatorLayout mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,6 +43,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mainLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.mipmap.ic_action_logo);
         getSupportActionBar().setTitle("");
@@ -50,8 +63,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                android.app.FragmentManager fm = getFragmentManager();
+                AddBoardFragment addBoardFragment = new AddBoardFragment();
+                addBoardFragment.show(fm, "AddBoardFragment");
             }
         });
 
@@ -83,42 +97,30 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment
+    // Result of the adding of the image
+    @Override
+    public void onSuccess(String boardName)
     {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment()
+        ParseBoard parseBoard = new ParseBoard();
+        parseBoard.addBoard(boardName, new ParseBoard.ParseBoardCallback()
         {
-        }
+            @Override
+            public void onSuccess(String result)
+            {
+                Snackbar.make(mainLayout, "Added new board", Snackbar.LENGTH_LONG).show();
+            }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber)
-        {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
+            @Override
+            public void onFail(String result)
+            {
+                Snackbar.make(mainLayout, result, Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState)
-        {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
+    @Override
+    public void onFail()
+    {
+
     }
 }

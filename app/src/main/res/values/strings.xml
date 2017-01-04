@@ -5,4 +5,5 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="board_error">Problem loading boards</string>
     <string name="pin_error">Problem loading pins</string>
+    <string name="add_boards">Add some boards</string>
 </resources>

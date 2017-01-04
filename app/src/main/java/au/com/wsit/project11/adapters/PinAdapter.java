@@ -1,7 +1,6 @@
 package au.com.wsit.project11.adapters;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +21,11 @@ import au.com.wsit.project11.models.Pin;
 
 public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
 {
-    private ArrayList<Pin> pins;
+    private ArrayList<Pin> pins = new ArrayList<>();
     private Context context;
 
-    public PinAdapter(Context context, ArrayList<Pin> pins)
+    public PinAdapter(Context context)
     {
-        this.pins = pins;
         this.context = context;
     }
 

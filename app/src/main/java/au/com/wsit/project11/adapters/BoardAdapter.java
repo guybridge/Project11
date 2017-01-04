@@ -22,7 +22,7 @@ import au.com.wsit.project11.models.Pin;
 public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
 {
     private Context context;
-    private LinkedHashMap<Board, ArrayList<Pin>> boards;
+    private ArrayList<Board> boards;
 
     public BoardAdapter(Context context)
     {
@@ -38,7 +38,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
         return viewHolder;
     }
 
-    public void swap(LinkedHashMap<Board, ArrayList<Pin>> boards)
+    public void swap(ArrayList<Board> boards)
     {
         if(boards != null)
         {
@@ -51,8 +51,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
     public void onBindViewHolder(ViewHolder holder, int position)
     {
         // Get the board
-        Board boardItem = (Board) boards.keySet().toArray()[position];
-        holder.bindViewHolder(boardItem, boards.get(boardItem));
+
+        holder.bindViewHolder(boards.get(position));
     }
 
     @Override
@@ -97,13 +97,14 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
             }
         }
 
-        private void bindViewHolder(Board board, ArrayList<Pin> pins)
+        private void bindViewHolder(Board board)
         {
             boardTitle.setText(board.getBoardTitle());
             Picasso.with(context).load(board.getImageUrl()).into(boardImage);
             pinRecycler.setLayoutManager(new GridLayoutManager(context, 2));
-            pinAdapter = new PinAdapter(context, pins);
+            pinAdapter = new PinAdapter(context);
             pinRecycler.setAdapter(pinAdapter);
+            pinAdapter.swap(board.getBoardPins());
         }
 
 
