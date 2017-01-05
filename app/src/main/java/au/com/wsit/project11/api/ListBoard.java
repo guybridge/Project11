@@ -4,6 +4,7 @@ import android.text.BoringLayout;
 import android.util.Log;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -34,6 +35,7 @@ public class ListBoard
     public void getBoards(final ListBoardCallback callback)
     {
         ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery(Constants.BOARDS_CLASS);
+        parseQuery.addDescendingOrder("createdAt");
         parseQuery.findInBackground(new FindCallback<ParseObject>()
         {
 

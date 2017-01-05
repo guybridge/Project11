@@ -27,7 +27,7 @@ public class FileHelper
         this.context = context;
     }
 
-    private Uri getOutputMediaFileUri(int mediaType)
+    public Uri getOutputMediaFileUri(int mediaType)
     {
         // check for external storage
         if(isExternalStorageAvailable())
@@ -63,6 +63,7 @@ public class FileHelper
 
     private String[] createFileName(int mediaType)
     {
+        Log.i(TAG, "Trying to create file name");
         String fileName = "";
         String fileType = "";
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

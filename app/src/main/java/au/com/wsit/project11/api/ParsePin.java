@@ -1,27 +1,33 @@
 package au.com.wsit.project11.api;
 
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
+
+import java.util.ArrayList;
 
 import au.com.wsit.project11.utils.Constants;
 
 /**
- * Created by guyb on 4/01/17.
+ * Created by guyb on 5/01/17.
  */
 
-public class ParseBoard
+public class ParsePin
 {
-    public interface ParseBoardCallback
+    public interface ParsePinCallback
     {
         void onSuccess(String result);
         void onFail(String result);
     }
 
-    public void addBoard(final String boardName, final ParseBoardCallback callback)
+    public void addPin(String title, String comment, ArrayList<String> tags, final ParsePinCallback callback)
     {
-        ParseObject parseObject = new ParseObject(Constants.BOARDS_CLASS);
-        parseObject.put(Constants.KEY_BOARD_NAME, boardName);
+        ParseObject parseObject = new ParseObject(Constants.PIN_CLASS);
+        parseObject.put(Constants.KEY_PIN_TITLE, title);
+        parseObject.put(Constants.KEY_PIN_COMMENT, comment);
+        parseObject.put(Constants.KEY_PIN_TAGS, tags);
+
         parseObject.saveInBackground(new SaveCallback()
         {
             @Override
@@ -29,7 +35,7 @@ public class ParseBoard
             {
                 if(e == null)
                 {
-                    callback.onSuccess(boardName);
+                    callback.onSuccess("Success");
                 }
                 else
                 {
@@ -38,5 +44,4 @@ public class ParseBoard
             }
         });
     }
-
 }

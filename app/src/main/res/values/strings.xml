@@ -7,4 +7,8 @@
     <string name="pin_error">Problem loading pins</string>
     <string name="add_boards">Add some boards</string>
     <string name="add_pin">Add Pin</string>
+    <string name="tags">#Tags</string>
+    <string name="comment">Comment</string>
+    <string name="title">Title</string>
+    <string name="action_save">Save</string>
 </resources>
