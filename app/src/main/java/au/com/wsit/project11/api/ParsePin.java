@@ -34,6 +34,12 @@ public class ParsePin
         parseObject.put(Constants.KEY_PIN_TAGS, tags);
         parseObject.put(Constants.MEDIA_DATA, file);
 
+        // Add the boards to which the pin is associated
+        for(String boardName : boardNames)
+        {
+            parseObject.add(Constants.KEY_BOARD_NAME, boardName);
+        }
+
         Log.i(TAG, "Starting to save");
 
         parseObject.saveInBackground(new SaveCallback()

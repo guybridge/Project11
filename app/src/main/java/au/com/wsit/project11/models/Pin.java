@@ -11,7 +11,7 @@ public class Pin
     private String mediaUrl;
     private String pinTitle;
     private String pinComment;
-    private ArrayList<String> pinTags;
+    private String pinTags;
 
     public String getMediaUrl()
     {
@@ -43,12 +43,12 @@ public class Pin
         this.pinComment = pinComment;
     }
 
-    public ArrayList<String> getPinTags()
+    public String getPinTags()
     {
         return pinTags;
     }
 
-    public void setPinTags(ArrayList<String> pinTags)
+    public void setPinTags(String pinTags)
     {
         this.pinTags = pinTags;
     }

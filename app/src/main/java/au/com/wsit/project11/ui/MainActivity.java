@@ -26,6 +26,11 @@ import android.view.View;
 
 import android.widget.TextView;
 
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseRelation;
+import com.parse.SaveCallback;
+
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
@@ -244,11 +249,7 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
             intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
             startActivityForResult(intent, Constants.TAKE_PHOTO_REQUEST);
         }
-
-
     }
-
-    
 
     // Result of the adding of the image from the dialog fragment
     @Override

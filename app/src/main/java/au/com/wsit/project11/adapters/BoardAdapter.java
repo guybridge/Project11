@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import au.com.wsit.project11.R;
+import au.com.wsit.project11.api.ListPin;
 import au.com.wsit.project11.models.Board;
 import au.com.wsit.project11.models.Pin;
 
@@ -24,6 +25,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
 {
     private Context context;
     private ArrayList<Board> boards = new ArrayList<>();
+    private static final String TAG = BoardAdapter.class.getSimpleName();
 
     public BoardAdapter(Context context)
     {
@@ -74,6 +76,18 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
             boardTitle = (TextView) itemView.findViewById(R.id.boardTitle);
             boardImage = (ImageView) itemView.findViewById(R.id.boardImage);
             pinRecycler = (RecyclerView) itemView.findViewById(R.id.pinRecycler);
+            pinRecycler.setLayoutManager(new GridLayoutManager(context, 2));
+            pinRecycler.setAdapter(pinAdapter);
+        }
+
+        private void bindViewHolder(final Board board)
+        {
+            boardTitle.setText(board.getBoardTitle());
+            Picasso.with(context).load(board.getImageUrl()).placeholder(R.drawable.asset6).into(boardImage);
+            pinRecycler.setLayoutManager(new ScrollessLayoutManager(context, 2));
+            pinAdapter = new PinAdapter(context);
+            pinRecycler.setAdapter(pinAdapter);
+            pinAdapter.swap(board.getBoardPins());
 
             itemView.setOnClickListener(new View.OnClickListener()
             {
@@ -84,19 +98,31 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
                     itemView.setAlpha(0.3f);
                     itemView.animate().alpha(1).setDuration(250).start();
                     togglePinView();
+                    loadPins(board.getBoardTitle());
                 }
             });
         }
 
-        private void bindViewHolder(Board board)
+        private void loadPins(String boardName)
         {
-            boardTitle.setText(board.getBoardTitle());
-            Picasso.with(context).load(board.getImageUrl()).placeholder(R.drawable.asset6).into(boardImage);
-            pinRecycler.setLayoutManager(new GridLayoutManager(context, 2));
-            pinAdapter = new PinAdapter(context);
-            pinRecycler.setAdapter(pinAdapter);
-            pinAdapter.swap(board.getBoardPins());
+            ListPin listPin = new ListPin(context);
+            listPin.getPins(boardName, new ListPin.ListPinCallback()
+            {
+                @Override
+                public void onSuccess(ArrayList<Pin> pinsList)
+                {
+                    Log.i(TAG, "Loading pins");
+                    pinAdapter.swap(pinsList);
+                }
+
+                @Override
+                public void onFail(String errorMessage)
+                {
+                    Log.i(TAG, "Failed to load pins list " + errorMessage);
+                }
+            });
         }
+
 
         private void togglePinView()
         {
