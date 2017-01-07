@@ -195,15 +195,15 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
         {
             case R.id.action_settings:
                 break;
-            case R.id.action_add_pin:
+            case R.id.action_start_camera:
                 // Add new pin
-                addPin();
+                startChooser();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void addPin()
+    private void startChooser()
     {
         // Start a dialog to check which type of media to take
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -248,7 +248,9 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
 
     }
 
-    // Result of the adding of the image
+    
+
+    // Result of the adding of the image from the dialog fragment
     @Override
     public void onSuccess(String boardName)
     {

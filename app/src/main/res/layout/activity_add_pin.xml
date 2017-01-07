@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,13 +20,29 @@
     android:orientation="vertical"
     tools:context="au.com.wsit.project11.ui.AddPinActivity">
 
-    <ImageView
+    <RelativeLayout
         android:layout_gravity="center_horizontal"
-        android:id="@+id/pinImageView"
-        android:scaleType="centerCrop"
-        android:src="@drawable/asset1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/pinImageView"
+            android:scaleType="center"
+            android:src="@drawable/asset1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+
 
     <EditText
         android:hint="@string/title"
@@ -34,11 +58,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:hint="@string/tags"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/pinTags"
+        <EditText
+            android:textSize="18sp"
+            android:hint="@string/tags"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/pinTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/boardRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
+
+</ScrollView>

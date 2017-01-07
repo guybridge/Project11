@@ -19,4 +19,5 @@ public class Constants
     public static final int MEDIA_TYPE_VIDEO = 3;
 
     public static final String MEDIA_URL = "media_url";
+    public static final String MEDIA_DATA = "MEDIA_DATA";
 }

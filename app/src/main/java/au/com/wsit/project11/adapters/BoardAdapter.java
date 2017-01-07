@@ -68,7 +68,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
         private RecyclerView pinRecycler;
         private PinAdapter pinAdapter;
 
-        public ViewHolder(View itemView)
+        public ViewHolder(final View itemView)
         {
             super(itemView);
             boardTitle = (TextView) itemView.findViewById(R.id.boardTitle);
@@ -80,6 +80,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
                 @Override
                 public void onClick(View v)
                 {
+                    // Show we clicked on a board by changing the alpha
+                    itemView.setAlpha(0.3f);
+                    itemView.animate().alpha(1).setDuration(250).start();
                     togglePinView();
                 }
             });
