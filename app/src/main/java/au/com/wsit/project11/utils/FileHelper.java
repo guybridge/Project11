@@ -28,7 +28,7 @@ public class FileHelper
 {
     private static final String TAG = FileHelper.class.getSimpleName();
     private Context context;
-    public static final int SHORT_SIDE_TARGET = 1280;
+    public static final int SHORT_SIDE_TARGET = 256;
 
     public FileHelper(Context context)
     {
@@ -115,7 +115,7 @@ public class FileHelper
         Bitmap bitmap = ImageResizer.resizeImageMaintainAspectRatio(imageData, SHORT_SIDE_TARGET);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 70, outputStream);
         byte[] reducedData = outputStream.toByteArray();
         try {
             outputStream.close();

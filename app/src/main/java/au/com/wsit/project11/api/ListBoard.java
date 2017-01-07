@@ -2,6 +2,7 @@ package au.com.wsit.project11.api;
 
 
 
+import android.content.Context;
 import android.util.Log;
 
 import com.parse.FindCallback;
@@ -28,6 +29,12 @@ public class ListBoard
 {
 
     public static final String TAG = ListBoard.class.getSimpleName();
+    private Context context;
+
+    public ListBoard(Context context)
+    {
+        this.context = context;
+    }
 
     public interface ListBoardCallback
     {
@@ -46,7 +53,7 @@ public class ListBoard
             public void done(List<ParseObject> objects, ParseException e)
             {
 
-                ArrayList<Board> boards = new ArrayList<>();
+                final ArrayList<Board> boards = new ArrayList<>();
 
                 for (ParseObject object : objects)
                 {
@@ -54,6 +61,24 @@ public class ListBoard
                     final String boardTitle = object.getString(Constants.KEY_BOARD_NAME);
                     board.setBoardTitle(boardTitle);
                     boards.add(board);
+
+                    // For each board get the pins
+                    ListPin listPin = new ListPin(context);
+                    listPin.getPins(boardTitle, new ListPin.ListPinCallback()
+                    {
+                        @Override
+                        public void onSuccess(ArrayList<Pin> pinsList)
+                        {
+                            board.setBoardPins(pinsList);
+                        }
+
+                        @Override
+                        public void onFail(String errorMessage)
+                        {
+
+                        }
+                    });
+
                 }
 
                 callback.onSuccess(boards);

@@ -82,7 +82,7 @@ public class AddPinActivity extends AppCompatActivity implements SimpleBoardAdap
 
     private void showBoards()
     {
-        ListBoard listBoard = new ListBoard();
+        ListBoard listBoard = new ListBoard(this);
         listBoard.getBoards(new ListBoard.ListBoardCallback()
         {
             @Override

@@ -3,15 +3,23 @@ package au.com.wsit.project11.ui.fragments;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import au.com.wsit.project11.R;
+import au.com.wsit.project11.utils.Constants;
+import au.com.wsit.project11.utils.FileHelper;
+
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -25,6 +33,7 @@ public class AddBoardFragment extends DialogFragment
     private EditText boardName;
     private ImageView photoImage;
     private int TAKE_PHOTO_REQUEST_CODE = 9001;
+    private Uri mediaUri;
 
     public interface AddBoardCallback
     {
@@ -80,6 +89,24 @@ public class AddBoardFragment extends DialogFragment
         });
 
         return view;
+    }
+
+    // Helper
+    private void takePhoto()
+    {
+        FileHelper fileHelper = new FileHelper(getActivity());
+        mediaUri = fileHelper.getOutputMediaFileUri(Constants.MEDIA_TYPE_IMAGE);
+
+        if (mediaUri == null)
+        {
+            Toast.makeText(getActivity(), "Problem accessing your external storage", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
+            startActivityForResult(intent, Constants.TAKE_PHOTO_REQUEST);
+        }
     }
 
     @Override

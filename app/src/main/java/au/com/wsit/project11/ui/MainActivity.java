@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
     {
         swipeRefreshLayout.setRefreshing(true);
         // Get data
-        ListBoard listBoard = new ListBoard();
+        ListBoard listBoard = new ListBoard(this);
         listBoard.getBoards(new ListBoard.ListBoardCallback()
         {
             @Override

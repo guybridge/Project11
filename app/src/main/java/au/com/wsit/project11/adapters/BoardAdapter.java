@@ -98,27 +98,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
                     itemView.setAlpha(0.3f);
                     itemView.animate().alpha(1).setDuration(250).start();
                     togglePinView();
-                    loadPins(board.getBoardTitle());
-                }
-            });
-        }
-
-        private void loadPins(String boardName)
-        {
-            ListPin listPin = new ListPin(context);
-            listPin.getPins(boardName, new ListPin.ListPinCallback()
-            {
-                @Override
-                public void onSuccess(ArrayList<Pin> pinsList)
-                {
-                    Log.i(TAG, "Loading pins");
-                    pinAdapter.swap(pinsList);
-                }
-
-                @Override
-                public void onFail(String errorMessage)
-                {
-                    Log.i(TAG, "Failed to load pins list " + errorMessage);
                 }
             });
         }
