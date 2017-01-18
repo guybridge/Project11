@@ -13,5 +13,6 @@
     <string-array name="pin_choices">
         <item>Add tags</item>
         <item>Add to board</item>
+        <item>Delete pin</item>
     </string-array>
 </resources>

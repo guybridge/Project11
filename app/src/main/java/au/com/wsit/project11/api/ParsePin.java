@@ -2,9 +2,11 @@ package au.com.wsit.project11.api;
 
 import android.util.Log;
 
+import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.SaveCallback;
 
@@ -72,8 +74,33 @@ public class ParsePin
 
     }
 
-    public void deletePin(String pinID, ParsePinCallback callback)
+    public void deletePin(String pinID, final ParsePinCallback callback)
     {
-        
+        ParseQuery<ParseObject> deleteQuery = ParseQuery.getQuery(Constants.PIN_CLASS);
+        try
+        {
+            ParseObject parseObject = deleteQuery.get(pinID);
+            parseObject.deleteInBackground(new DeleteCallback()
+            {
+                @Override
+                public void done(ParseException e)
+                {
+                    if(e == null)
+                    {
+                        callback.onSuccess("Deleted pin");
+                    }
+                    else
+                    {
+                        callback.onFail(e.getMessage());
+                    }
+                }
+            });
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+            callback.onFail(e.getMessage());
+        }
+
     }
 }

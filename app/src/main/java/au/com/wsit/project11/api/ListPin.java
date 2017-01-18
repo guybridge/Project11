@@ -70,6 +70,7 @@ public class ListPin
                     pin.setPinComment(pinComment);
                     pin.setPinTags(pinTags);
                     pin.setMediaUrl(pinImageUrl);
+                    pin.setPinID(pinInstance.getObjectId());
                     pinsList.add(pin);
                 }
 

@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
+import au.com.wsit.project11.api.ParsePin;
 import au.com.wsit.project11.models.Pin;
 
 /**
@@ -78,7 +79,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
 
         }
 
-        private void bindViewHolder(Pin pin)
+        private void bindViewHolder(final Pin pin)
         {
             pinTitle.setText(pin.getPinTitle());
             pinComment.setText(pin.getPinTitle());
@@ -114,6 +115,9 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
                                         case 1:
                                             // Add pin to more boards
                                             break;
+                                        case 2:
+                                            deletePin(getAdapterPosition(), pin.getPinID());
+                                            break;
                                     }
                                 }
                             });
@@ -124,5 +128,24 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             });
         }
 
+    }
+
+    public void deletePin(final int adapterPosition, String pinID)
+    {
+        ParsePin parsePin = new ParsePin();
+        parsePin.deletePin(pinID, new ParsePin.ParsePinCallback()
+        {
+            @Override
+            public void onSuccess(String result)
+            {
+                notifyItemRemoved(adapterPosition);
+            }
+
+            @Override
+            public void onFail(String result)
+            {
+
+            }
+        });
     }
 }
