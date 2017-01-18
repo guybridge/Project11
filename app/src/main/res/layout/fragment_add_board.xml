@@ -15,18 +15,18 @@
     <EditText
         android:hint="board name"
         android:layout_gravity="center_horizontal"
-        android:ems="8"
+        android:ems="16"
         android:textAlignment="center"
         android:id="@+id/boardNameEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <ImageView
-        android:id="@+id/takePhotoImageView"
-        android:src="@mipmap/ic_add_photo"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/previewBoardsRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
+    </android.support.v7.widget.RecyclerView>
 
 
 

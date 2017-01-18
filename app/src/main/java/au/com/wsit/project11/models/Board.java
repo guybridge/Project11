@@ -9,8 +9,21 @@ import java.util.ArrayList;
 public class Board
 {
     private String boardTitle;
-    private String ImageUrl;
+    private int ImageUrl;
     private ArrayList<Pin> boardPins;
+    private String boardID;
+
+    public String getBoardID()
+    {
+        return boardID;
+    }
+
+    public void setBoardID(String boardID)
+    {
+        this.boardID = boardID;
+    }
+
+
 
     public String getBoardTitle()
     {
@@ -22,12 +35,12 @@ public class Board
         this.boardTitle = boardTitle;
     }
 
-    public String getImageUrl()
+    public int getImageUrl()
     {
         return ImageUrl;
     }
 
-    public void setImageUrl(String imageUrl)
+    public void setImageUrl(int imageUrl)
     {
         ImageUrl = imageUrl;
     }

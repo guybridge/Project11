@@ -4,4 +4,14 @@
         <item>Take Picture</item>
         <item>Take Video</item>
     </string-array>
+
+    <string-array name="board_choices">
+        <item>Change name or photo</item>
+        <item>Delete board</item>
+    </string-array>
+
+    <string-array name="pin_choices">
+        <item>Add tags</item>
+        <item>Add to board</item>
+    </string-array>
 </resources>

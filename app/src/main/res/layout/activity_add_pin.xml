@@ -22,17 +22,8 @@
 
     <RelativeLayout
         android:layout_gravity="center_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/pinImageView"
-            android:scaleType="center"
-            android:src="@drawable/asset1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -40,9 +31,15 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"/>
 
+        <ImageView
+            android:id="@+id/pinImageView"
+            android:scaleType="center"
+            android:src="@drawable/asset1"
+            android:layout_width="170dp"
+            android:layout_height="256dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
     </RelativeLayout>
-
-
 
     <EditText
         android:hint="@string/title"

@@ -59,7 +59,10 @@ public class ListBoard
                 {
                     final Board board = new Board();
                     final String boardTitle = object.getString(Constants.KEY_BOARD_NAME);
+                    int boardImageUrl = object.getInt(Constants.KEY_BOARD_IMAGE_URL);
                     board.setBoardTitle(boardTitle);
+                    board.setImageUrl(boardImageUrl);
+                    board.setBoardID(object.getObjectId());
                     boards.add(board);
 
                     // For each board get the pins
@@ -84,5 +87,7 @@ public class ListBoard
                 callback.onSuccess(boards);
             }
         });
+
+
     }
 }

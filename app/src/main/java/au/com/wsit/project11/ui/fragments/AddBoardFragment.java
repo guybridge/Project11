@@ -1,26 +1,23 @@
 package au.com.wsit.project11.ui.fragments;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import au.com.wsit.project11.R;
+import au.com.wsit.project11.adapters.PreviewBoardAdapter;
 import au.com.wsit.project11.utils.Constants;
-import au.com.wsit.project11.utils.FileHelper;
-
-import static android.app.Activity.RESULT_OK;
+import au.com.wsit.project11.utils.Generator;
 
 /**
  * Created by guyb on 4/01/17.
@@ -29,24 +26,73 @@ import static android.app.Activity.RESULT_OK;
 public class AddBoardFragment extends DialogFragment
 {
     private static final String TAG = AddBoardFragment.class.getSimpleName();
-    private AddBoardCallback callback;
+    private CreateBoardCallback createBoardCallback;
+    private UpdateBoardCallback updateBoardCallback;
     private EditText boardName;
-    private ImageView photoImage;
-    private int TAKE_PHOTO_REQUEST_CODE = 9001;
-    private Uri mediaUri;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private PreviewBoardAdapter previewBoardAdapter;
+    private String currentBoardName;
+    private String boardID;
+    private int boardPosition;
 
-    public interface AddBoardCallback
+    PreviewBoardAdapter.OnItemClickListener listener = new PreviewBoardAdapter.OnItemClickListener()
     {
-        void onSuccess(String boardName);
-        void onFail();
+        @Override
+        public void onItemClick(int resourceLocation)
+        {
+            String name = boardName.getText().toString();
+            if(!name.equals("")) // make sure the board name is not null
+            {
+                if(currentBoardName.equals(""))
+                {
+                    // current Board name null we are going to call back to main activity
+                    createBoardCallback.onSuccess(name, resourceLocation);
+                    dismiss();
+                }
+                else
+                {
+                    updateBoardCallback.onSuccess(boardPosition, boardID, boardName.getText().toString(), resourceLocation);
+                    dismiss();
+                }
+            }
+            else
+            {
+                Toast.makeText(getActivity(), "Give the board a title", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+    public interface CreateBoardCallback
+    {
+        void onSuccess(String boardName, int mediaUri);
+        void onFail(String result);
+    }
+
+    public interface UpdateBoardCallback
+    {
+        void onSuccess(int boardPosition, String boardID, String boardName, int mediaUri);
+        void onFail(String result);
+    }
+
+    public void setListener(UpdateBoardCallback listener)
+    {
+        updateBoardCallback = listener;
     }
 
     @Override
     public void onAttach(Context context)
     {
         super.onAttach(context);
-        callback = (AddBoardCallback) context;
+        createBoardCallback = (CreateBoardCallback) context;
+    }
 
+    // API 19
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        createBoardCallback = (CreateBoardCallback) activity;
     }
 
     @Nullable
@@ -56,69 +102,36 @@ public class AddBoardFragment extends DialogFragment
         View view = inflater.inflate(R.layout.fragment_add_board, container, false);
 
         boardName = (EditText) view.findViewById(R.id.boardNameEditText);
-        photoImage = (ImageView) view.findViewById(R.id.takePhotoImageView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.previewBoardsRecycler);
+        layoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView.setLayoutManager(layoutManager);
 
-        photoImage.setOnClickListener(new View.OnClickListener()
+        Bundle bundle = getArguments();
+        try
         {
-            @Override
-            public void onClick(View v)
-            {
-                // Animate the button click
-                photoImage.setScaleY(0);
-                photoImage.setScaleX(0);
-                photoImage.animate().scaleX(1).scaleY(1).start();
+            currentBoardName = bundle.getString(Constants.KEY_BOARD_NAME);
+            boardID = bundle.getString(Constants.KEY_BOARD_ID);
+            boardPosition = bundle.getInt(Constants.KEY_BOARD_POSITION);
+        }
+        catch(NullPointerException e)
+        {
+            Log.i(TAG, "Nothing in bundle");
+        }
 
-                // Start an Intent to take a photo
-               // Intent takePhotoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE, )
+        if(currentBoardName != null)
+        {
+            boardName.setText(currentBoardName);
+        }
 
-                String name = boardName.getText().toString().trim();
-                if(name != null)
-                {
-                    callback.onSuccess(name);
-                    dismiss();
-
-                }
-                else
-                {
-                    dismiss();
-                }
-
-
-
-            }
-        });
+        showPhotosCollection();
 
         return view;
     }
 
-    // Helper
-    private void takePhoto()
+
+    private void showPhotosCollection()
     {
-        FileHelper fileHelper = new FileHelper(getActivity());
-        mediaUri = fileHelper.getOutputMediaFileUri(Constants.MEDIA_TYPE_IMAGE);
-
-        if (mediaUri == null)
-        {
-            Toast.makeText(getActivity(), "Problem accessing your external storage", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
-            startActivityForResult(intent, Constants.TAKE_PHOTO_REQUEST);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK)
-        {
-            if(requestCode == TAKE_PHOTO_REQUEST_CODE)
-            {
-
-            }
-        }
+        previewBoardAdapter = new PreviewBoardAdapter(getActivity(), listener, Generator.getImages());
+        recyclerView.setAdapter(previewBoardAdapter);
     }
 }

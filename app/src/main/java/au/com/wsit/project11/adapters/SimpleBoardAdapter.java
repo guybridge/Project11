@@ -14,7 +14,7 @@ import au.com.wsit.project11.R;
 import au.com.wsit.project11.models.Board;
 
 /**
- * Shows the boards to choose from in the add in activity
+ * Shows the boards to choose from in AddPinActivity
  */
 
 public class SimpleBoardAdapter extends RecyclerView.Adapter<SimpleBoardAdapter.ViewHolder>

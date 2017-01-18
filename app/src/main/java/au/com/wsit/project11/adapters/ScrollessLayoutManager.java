@@ -2,18 +2,20 @@ package au.com.wsit.project11.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 
 /**
- * Created by guyb on 7/01/17.
+ * This custom layout manager stops the child recycler from thinking it's at the top so the swiperefresh still works.
  */
 
-public class ScrollessLayoutManager extends GridLayoutManager
+public class ScrollessLayoutManager extends StaggeredGridLayoutManager
 {
 
-    public ScrollessLayoutManager(Context context, int spanCount)
+
+    public ScrollessLayoutManager(int spanCount, int orientation)
     {
-        super(context, spanCount);
+        super(spanCount, orientation);
     }
 
     @Override

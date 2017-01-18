@@ -1,6 +1,8 @@
 package au.com.wsit.project11.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +18,7 @@ import au.com.wsit.project11.R;
 import au.com.wsit.project11.models.Pin;
 
 /**
- * Created by guyb on 3/01/17.
+ * This adapter is for showing the pins within a board
  */
 
 public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
@@ -73,14 +75,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             pinTags = (TextView) itemView.findViewById(R.id.pinTags);
             pinImage = (ImageView) itemView.findViewById(R.id.pinImage);
 
-            itemView.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    // TODO: Expand view
-                }
-            });
+
         }
 
         private void bindViewHolder(Pin pin)
@@ -89,6 +84,44 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             pinComment.setText(pin.getPinTitle());
             pinTags.setText(pin.getPinTags().toString());
             Picasso.with(context).load(pin.getMediaUrl()).into(pinImage);
+
+            itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    // TODO: Expand view
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                            .setTitle("Pin Options")
+                            .setItems(R.array.pin_choices, new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which)
+                                {
+                                    switch(which)
+                                    {
+                                        case 0:
+                                            // Add more tags to pin
+                                            break;
+                                        case 1:
+                                            // Add pin to more boards
+                                            break;
+                                    }
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return true;
+                }
+            });
         }
 
     }

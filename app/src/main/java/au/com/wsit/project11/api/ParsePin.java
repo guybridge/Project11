@@ -37,7 +37,16 @@ public class ParsePin
         // Add the boards to which the pin is associated
         for(String boardName : boardNames)
         {
-            parseObject.add(Constants.KEY_BOARD_NAME, boardName);
+            ParseObject boardsClass = ParseObject.createWithoutData(Constants.BOARDS_CLASS, boardName);
+            boardsClass.add("PINS", parseObject);
+            boardsClass.saveInBackground(new SaveCallback()
+            {
+                @Override
+                public void done(ParseException e)
+                {
+                    Log.i(TAG, "Saved relation");
+                }
+            });
         }
 
         Log.i(TAG, "Starting to save");
@@ -61,5 +70,10 @@ public class ParsePin
         });
 
 
+    }
+
+    public void deletePin(String pinID, ParsePinCallback callback)
+    {
+        
     }
 }

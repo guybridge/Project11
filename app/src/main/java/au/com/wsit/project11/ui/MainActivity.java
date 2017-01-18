@@ -26,11 +26,6 @@ import android.view.View;
 
 import android.widget.TextView;
 
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseRelation;
-import com.parse.SaveCallback;
-
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
@@ -42,7 +37,9 @@ import au.com.wsit.project11.ui.fragments.AddBoardFragment;
 import au.com.wsit.project11.utils.Constants;
 import au.com.wsit.project11.utils.FileHelper;
 
-public class MainActivity extends AppCompatActivity implements AddBoardFragment.AddBoardCallback
+public class MainActivity extends AppCompatActivity
+        implements AddBoardFragment.CreateBoardCallback,
+        BoardAdapter.NotifyBoardChanges
 {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -99,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
 
 
         getData();
+
 
     }
 
@@ -253,10 +251,10 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
 
     // Result of the adding of the image from the dialog fragment
     @Override
-    public void onSuccess(String boardName)
+    public void onSuccess(String boardName, int mediaUri)
     {
         ParseBoard parseBoard = new ParseBoard();
-        parseBoard.addBoard(boardName, new ParseBoard.ParseBoardCallback()
+        parseBoard.addBoard(boardName, mediaUri, new ParseBoard.ParseBoardCallback()
         {
             @Override
             public void onSuccess(String result)
@@ -274,8 +272,29 @@ public class MainActivity extends AppCompatActivity implements AddBoardFragment.
     }
 
     @Override
-    public void onFail()
+    public void onFail(String result)
     {
 
+    }
+
+    // Notify the adapter of board changes
+    @Override
+    public void onChanged()
+    {
+        ListBoard listBoard = new ListBoard(this);
+        listBoard.getBoards(new ListBoard.ListBoardCallback()
+        {
+            @Override
+            public void onSuccess(ArrayList<Board> boards)
+            {
+                boardAdapter.swap(boards);
+            }
+
+            @Override
+            public void onFail(String result)
+            {
+
+            }
+        });
     }
 }
