@@ -20,7 +20,7 @@ import au.com.wsit.project11.utils.Constants;
 import au.com.wsit.project11.utils.Generator;
 
 /**
- * Created by guyb on 4/01/17.
+ *  This fragment is used to add a new board and also to edit the board attributes
  */
 
 public class AddBoardFragment extends DialogFragment
@@ -44,15 +44,24 @@ public class AddBoardFragment extends DialogFragment
             String name = boardName.getText().toString();
             if(!name.equals("")) // make sure the board name is not null
             {
-                if(currentBoardName.equals(""))
+                try
+                {
+                    if(currentBoardName.equals(""))
+                    {
+                        Log.i(TAG, "Current board name is null - this is a new board");
+                    }
+                    else
+                    {
+                        // Callback to the adapter
+                        updateBoardCallback.onSuccess(boardPosition, boardID, boardName.getText().toString(), resourceLocation);
+                        dismiss();
+                    }
+                }
+                catch(NullPointerException e)
                 {
                     // current Board name null we are going to call back to main activity
+                    Log.i(TAG, "Current board name is null - this is a new board");
                     createBoardCallback.onSuccess(name, resourceLocation);
-                    dismiss();
-                }
-                else
-                {
-                    updateBoardCallback.onSuccess(boardPosition, boardID, boardName.getText().toString(), resourceLocation);
                     dismiss();
                 }
             }

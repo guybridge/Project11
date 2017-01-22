@@ -109,7 +109,6 @@ public class AddPinActivity extends AppCompatActivity implements SimpleBoardAdap
         switch (id)
         {
             case R.id.action_save_pin:
-                // TODO: Save to backend
                 savePin();
                 break;
         }

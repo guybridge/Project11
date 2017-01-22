@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+    android:minWidth="500dp"
+    android:padding="12dp">
+
+    <TextView
+        android:padding="10dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:text="@string/change_pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:textAlignment="center"
+        android:hint="@string/pin_name"
+        android:id="@+id/pinName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:textAlignment="center"
+        android:id="@+id/pinTags"
+        android:hint="@string/pin_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_margin="15dp"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/savePinButton"
+        android:background="@color/transparent_white"
+        android:text="@string/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+</LinearLayout>

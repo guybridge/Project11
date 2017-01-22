@@ -25,6 +25,7 @@ public class ParseBoard
         void onFail(String result);
     }
 
+    // Adds a new board
     public void addBoard(final String boardName, int mediaUri, final ParseBoardCallback callback)
     {
         ParseObject parseObject = new ParseObject(Constants.BOARDS_CLASS);

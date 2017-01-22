@@ -11,4 +11,8 @@
     <string name="comment">Comment</string>
     <string name="title">Title</string>
     <string name="action_save">Save</string>
+    <string name="pin_name">Pin Name</string>
+    <string name="pin_tags">Pin Tags</string>
+    <string name="save">Save</string>
+    <string name="change_pin">Change Pin</string>
 </resources>

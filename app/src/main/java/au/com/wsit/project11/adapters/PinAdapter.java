@@ -1,9 +1,13 @@
 package au.com.wsit.project11.adapters;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +21,16 @@ import java.util.ArrayList;
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.api.ParsePin;
 import au.com.wsit.project11.models.Pin;
+import au.com.wsit.project11.ui.fragments.ChangePinFragment;
+import au.com.wsit.project11.utils.Constants;
 
 /**
  * This adapter is for showing the pins within a board
  */
 
-public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
+public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> implements ChangePinFragment.PinCallback
 {
+    private static final String TAG = PinAdapter.class.getSimpleName();
     private ArrayList<Pin> pins = new ArrayList<>();
     private Context context;
 
@@ -111,6 +118,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
                                     {
                                         case 0:
                                             // Add more tags to pin
+                                            showEditPinDialog(getAdapterPosition(), pin.getPinID(), pin.getPinTitle(), pin.getPinTags());
                                             break;
                                         case 1:
                                             // Add pin to more boards
@@ -128,6 +136,46 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             });
         }
 
+    }
+
+    private void showEditPinDialog(int adapterPosition, String pinID, String pinName, String pinTags)
+    {
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constants.KEY_BOARD_POSITION, adapterPosition);
+        bundle.putString(Constants.KEY_PIN_ID, pinID);
+        bundle.putString(Constants.KEY_PIN_TITLE, pinName);
+        bundle.putString(Constants.KEY_PIN_TAGS, pinTags);
+
+        Activity activity = (Activity) context;
+        FragmentManager fm = activity.getFragmentManager();
+
+        ChangePinFragment changePinFragment = new ChangePinFragment();
+        changePinFragment.setListener(PinAdapter.this);
+        changePinFragment.setArguments(bundle);
+
+        changePinFragment.show(fm, "ChangePinFragment");
+    }
+
+    // Callback from changing the pin
+    @Override
+    public void onChanged(final int adapterPosition, final String pinName, String pinID, final String pinTags)
+    {
+        ParsePin parsePin = new ParsePin();
+        parsePin.updatePin(pinID, pinName, pinTags, new ParsePin.ParsePinCallback()
+        {
+            @Override
+            public void onSuccess(String result)
+            {
+                Log.i(TAG, result);
+                notifyItemChanged(adapterPosition);
+            }
+
+            @Override
+            public void onFail(String result)
+            {
+                Log.i(TAG, result);
+            }
+        });
     }
 
     public void deletePin(final int adapterPosition, String pinID)

@@ -1,6 +1,7 @@
 package au.com.wsit.project11.api;
 
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
@@ -39,16 +40,7 @@ public class ParsePin
         // Add the boards to which the pin is associated
         for(String boardName : boardNames)
         {
-            ParseObject boardsClass = ParseObject.createWithoutData(Constants.BOARDS_CLASS, boardName);
-            boardsClass.add("PINS", parseObject);
-            boardsClass.saveInBackground(new SaveCallback()
-            {
-                @Override
-                public void done(ParseException e)
-                {
-                    Log.i(TAG, "Saved relation");
-                }
-            });
+           parseObject.add(Constants.KEY_BOARD_NAME, boardName);
         }
 
         Log.i(TAG, "Starting to save");
@@ -71,6 +63,38 @@ public class ParsePin
             }
         });
 
+
+    }
+
+    public void updatePin(String pinID, String pinName, String pinTags, final ParsePinCallback callback)
+    {
+        // TODO: Update pin tags
+        ParseQuery<ParseObject> pinQuery = ParseQuery.getQuery(Constants.PIN_CLASS);
+        try
+        {
+            ParseObject pin = pinQuery.get(pinID);
+            pin.put(Constants.KEY_PIN_TAGS, pinTags);
+            pin.saveInBackground(new SaveCallback()
+            {
+                @Override
+                public void done(ParseException e)
+                {
+                    if(e == null)
+                    {
+                        callback.onSuccess("Updated Pin Tags");
+                    }
+                    else
+                    {
+                        callback.onFail(e.getMessage());
+                    }
+
+                }
+            });
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
 
     }
 

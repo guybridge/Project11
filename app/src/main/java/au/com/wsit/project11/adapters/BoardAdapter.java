@@ -173,6 +173,10 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
             if(pinRecycler.getVisibility() == View.GONE)
             {
                 pinRecycler.setVisibility(View.VISIBLE);
+                pinRecycler.setAlpha(0.1f);
+                pinRecycler.setScaleY(0);
+                pinRecycler.setPivotY(0);
+                pinRecycler.animate().alpha(1).scaleY(1).setDuration(400).start();
             }
             else
             {

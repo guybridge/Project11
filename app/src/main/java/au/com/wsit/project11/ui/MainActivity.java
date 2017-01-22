@@ -3,6 +3,7 @@ package au.com.wsit.project11.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
@@ -26,6 +27,7 @@ import android.view.View;
 
 import android.widget.TextView;
 
+import java.security.acl.Permission;
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
@@ -36,6 +38,7 @@ import au.com.wsit.project11.models.Board;
 import au.com.wsit.project11.ui.fragments.AddBoardFragment;
 import au.com.wsit.project11.utils.Constants;
 import au.com.wsit.project11.utils.FileHelper;
+import au.com.wsit.project11.utils.Permissions;
 
 public class MainActivity extends AppCompatActivity
         implements AddBoardFragment.CreateBoardCallback,
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private TextView errorTextView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Uri mediaUri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -219,7 +223,21 @@ public class MainActivity extends AppCompatActivity
                 {
                     case 0:
                         // Take photo
-                        takePhoto();
+                        Permissions permissions = new Permissions(MainActivity.this);
+                        permissions.requestCameraPermissions(new Permissions.PermissionsCallback()
+                        {
+                            @Override
+                            public void onGranted()
+                            {
+                                takePhoto();
+                            }
+
+                            @Override
+                            public void onDenied()
+                            {
+
+                            }
+                        });
                         break;
                     case 1:
                         // Take video
@@ -296,5 +314,30 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+    {
+        Log.i(TAG, "onRequestPermissionsResult called");
+        switch (requestCode)
+        {
+            case Constants.PERMISSIONS_REQUEST:
+            {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    // permission was granted, yay!
+                    takePhoto();
+                }
+                else
+                {
+
+                }
+
+                break;
+            }
+
+        }
     }
 }
