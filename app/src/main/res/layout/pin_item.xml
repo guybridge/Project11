@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    card_view:cardCornerRadius="8dp"
-    android:layout_margin="12dp">
-
 <RelativeLayout
+    android:background="?android:attr/selectableItemBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_margin="12dp">
 
-    <ImageView
-        android:scaleType="centerCrop"
-        android:src="@drawable/asset7"
-        android:id="@+id/pinImage"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"/>
+    <android.support.v7.widget.CardView
+        android:id="@+id/pinImageCardView"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="5dp">
+
+        <ImageView
+            android:transitionName="@string/expand_view"
+            android:scaleType="centerCrop"
+            android:src="@drawable/asset7"
+            android:id="@+id/pinImage"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"/>
+    </android.support.v7.widget.CardView>
 
     <TextView
         android:padding="3dp"
@@ -24,7 +28,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:id="@+id/pinTitle"
-        android:layout_below="@id/pinImage"
+        android:layout_below="@id/pinImageCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -48,5 +52,3 @@
         android:layout_height="wrap_content"/>
 
 </RelativeLayout>
-
-</android.support.v7.widget.CardView>

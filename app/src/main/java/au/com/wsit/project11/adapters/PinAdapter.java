@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.api.ParsePin;
 import au.com.wsit.project11.models.Pin;
+import au.com.wsit.project11.ui.LargePinActivity;
 import au.com.wsit.project11.ui.fragments.ChangePinFragment;
 import au.com.wsit.project11.utils.Constants;
 
@@ -90,7 +94,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> impl
         {
             pinTitle.setText(pin.getPinTitle());
             pinComment.setText(pin.getPinTitle());
-            pinTags.setText(pin.getPinTags().toString());
+            pinTags.setText(pin.getPinTags());
             Picasso.with(context).load(pin.getMediaUrl()).into(pinImage);
 
             itemView.setOnClickListener(new View.OnClickListener()
@@ -98,7 +102,18 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> impl
                 @Override
                 public void onClick(View v)
                 {
-                    // TODO: Expand view
+                    // Animate the shared element transition
+                    View sharedElement = pinImage;
+                    String transitionName = context.getString(R.string.expand_view);
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat
+                                    .makeSceneTransitionAnimation
+                                            ((Activity)context, sharedElement, transitionName);
+
+                    Intent intent = new Intent(context, LargePinActivity.class);
+                    intent.putExtra(Constants.KEY_PIN_IMAGE_URL, pin.getMediaUrl());
+                    intent.putExtra(Constants.KEY_PIN_TITLE, pin.getPinTitle());
+                    ActivityCompat.startActivity(context, intent, options.toBundle());
                 }
             });
 

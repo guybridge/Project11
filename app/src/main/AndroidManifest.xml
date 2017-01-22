@@ -28,8 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.AddPinActivity"
+        <activity
+            android:name=".ui.AddPinActivity"
             android:parentActivityName=".ui.MainActivity">
+        </activity>
+        <activity android:name=".ui.LargePinActivity">
         </activity>
     </application>
 
