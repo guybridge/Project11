@@ -1,7 +1,9 @@
 package au.com.wsit.project11.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.models.Board;
 
+import static com.google.android.gms.internal.zzs.TAG;
+
 /**
  * Shows the boards to choose from in AddPinActivity
  */
@@ -20,20 +24,31 @@ import au.com.wsit.project11.models.Board;
 public class SimpleBoardAdapter extends RecyclerView.Adapter<SimpleBoardAdapter.ViewHolder>
 {
     private Context context;
-    private ArrayList<Board> boards;
-    private boardListener boardListener;
+    private ArrayList<Board> boards = new ArrayList<>();
+    private BoardListener boardListener;
 
-    public interface boardListener
+    public interface BoardListener
     {
         void onClick(String boardName);
     }
 
-    public SimpleBoardAdapter(Context context, ArrayList<Board> boards)
+    public SimpleBoardAdapter(Context context)
     {
         this.context = context;
-        this.boards = boards;
-        boardListener = (boardListener)context;
+    }
 
+    public void setListener(Activity listener)
+    {
+        this.boardListener = (BoardListener) listener;
+    }
+
+    public void add(Board board)
+    {
+        if(board != null)
+        {
+            this.boards.add(board);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -84,6 +99,7 @@ public class SimpleBoardAdapter extends RecyclerView.Adapter<SimpleBoardAdapter.
                     addBoardImage.animate().scaleX(1).scaleY(1).start();
                     itemView.setBackgroundColor(context.getResources().getColor(R.color.selected));
                     boardListener.onClick(boardItem.getBoardTitle());
+                    Log.i(TAG, "onClick called on item " + boardItem.getBoardTitle());
                 }
             });
 

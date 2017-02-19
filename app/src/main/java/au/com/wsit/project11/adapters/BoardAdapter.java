@@ -1,11 +1,9 @@
 package au.com.wsit.project11.adapters;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,12 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+
 import au.com.wsit.project11.R;
-import au.com.wsit.project11.api.ListPin;
-import au.com.wsit.project11.api.ParseBoard;
 import au.com.wsit.project11.models.Board;
-import au.com.wsit.project11.models.Pin;
 import au.com.wsit.project11.ui.fragments.AddBoardFragment;
 import au.com.wsit.project11.utils.Constants;
 import au.com.wsit.project11.utils.Generator;
@@ -32,18 +27,15 @@ import au.com.wsit.project11.utils.Generator;
  * This is the main adapter that shows the boards
  */
 
-public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> implements AddBoardFragment.UpdateBoardCallback
+public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
 {
     private Context context;
     private ArrayList<Board> boards = new ArrayList<>();
     private static final String TAG = BoardAdapter.class.getSimpleName();
-    private NotifyBoardChanges notifyBoardChanges;
-
 
     public BoardAdapter(Context context)
     {
         this.context = context;
-        this.notifyBoardChanges = (NotifyBoardChanges) context;
     }
 
     @Override
@@ -55,14 +47,17 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         return viewHolder;
     }
 
-    public interface NotifyBoardChanges
+    public void add(Board board)
     {
-        void onChanged();
+        if(board != null)
+        {
+            this.boards.add(0, board);
+            notifyItemInserted(0);
+        }
     }
 
     public void swap(ArrayList<Board> boards)
     {
-
         if(boards != null)
         {
             this.boards = boards;
@@ -82,11 +77,6 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         return boards.size();
     }
 
-    @Override
-    public void onFail(String result)
-    {
-
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -120,7 +110,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
             pinRecycler.setLayoutManager(new ScrollessLayoutManager(2, 0));
             pinAdapter = new PinAdapter(context);
             pinRecycler.setAdapter(pinAdapter);
-            pinAdapter.swap(board.getBoardPins());
+            //pinAdapter.swap(board.getBoardPins());
 
             itemView.setOnClickListener(new View.OnClickListener()
             {
@@ -150,11 +140,11 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
                                     {
                                         case 0:
                                             // Change the board attributes
-                                            showsPhotosChooser(getAdapterPosition(), board.getBoardID(), board.getBoardTitle());
+                                            showsPhotosChooser(getAdapterPosition(), null, board.getBoardTitle());
                                             break;
                                         case 1:
                                             // Delete the board
-                                            deleteBoard(getAdapterPosition(), board.getBoardID());
+                                            deleteBoard(getAdapterPosition(), null);
                                             break;
                                     }
                                 }
@@ -190,21 +180,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
     // Deletes a board
     private void deleteBoard(final int adapterPosition, String boardID)
     {
-        ParseBoard deleteBoard = new ParseBoard();
-        deleteBoard.deleteBoard(boardID, new ParseBoard.ParseBoardCallback()
-        {
-            @Override
-            public void onSuccess(String result)
-            {
-                notifyItemRemoved(adapterPosition);
-            }
 
-            @Override
-            public void onFail(String result)
-            {
-
-            }
-        });
     }
 
     private void showsPhotosChooser(int adapterPosition, String boardID, String boardName)
@@ -216,33 +192,8 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> 
         bundle.putInt(Constants.KEY_BOARD_POSITION, adapterPosition);
         FragmentManager fm = activity.getFragmentManager();
         AddBoardFragment updateBoardFragment = new AddBoardFragment();
-        updateBoardFragment.setListener(BoardAdapter.this);
         updateBoardFragment.setArguments(bundle);
         updateBoardFragment.show(fm, "ChangeAttributes");
     }
 
-    // Callback from changing the board attributes
-    @Override
-    public void onSuccess(final int boardPosition, String boardID, String boardName, int mediaUri)
-    {
-        Log.i(TAG, "Got callback from modify board");
-        Log.i(TAG, "Board name is: " + boardName);
-        Log.i(TAG, "Image asset is located at: " + mediaUri);
-        ParseBoard updateBoard = new ParseBoard();
-        updateBoard.updateBoardPhoto(boardID, boardName, mediaUri, new ParseBoard.ParseBoardCallback()
-        {
-            @Override
-            public void onSuccess(String result)
-            {
-                Log.i(TAG, result);
-                notifyBoardChanges.onChanged();
-            }
-
-            @Override
-            public void onFail(String result)
-            {
-                Log.i(TAG, result);
-            }
-        });
-    }
 }

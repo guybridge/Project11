@@ -25,4 +25,10 @@ public class Constants
     public static final String KEY_PIN_ID = "PIN_ID";
     public static final int PERMISSIONS_REQUEST = 9010;
     public static final String KEY_PIN_IMAGE_URL = "IMAGE_URL";
+    public static final String PINS_RELATION = "PINS_RELATION";
+
+    // Firebase child node names
+    public static final String PINS = "pins";
+    public static final String BOARDS = "boards";
+
 }

@@ -22,7 +22,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
-import au.com.wsit.project11.api.ParsePin;
 import au.com.wsit.project11.models.Pin;
 import au.com.wsit.project11.ui.LargePinActivity;
 import au.com.wsit.project11.ui.fragments.ChangePinFragment;
@@ -32,7 +31,7 @@ import au.com.wsit.project11.utils.Constants;
  * This adapter is for showing the pins within a board
  */
 
-public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> implements ChangePinFragment.PinCallback
+public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
 {
     private static final String TAG = PinAdapter.class.getSimpleName();
     private ArrayList<Pin> pins = new ArrayList<>();
@@ -133,13 +132,12 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> impl
                                     {
                                         case 0:
                                             // Add more tags to pin
-                                            showEditPinDialog(getAdapterPosition(), pin.getPinID(), pin.getPinTitle(), pin.getPinTags());
+                                            //showEditPinDialog(getAdapterPosition(), pin.getPinID(), pin.getPinTitle(), pin.getPinTags());
                                             break;
                                         case 1:
                                             // Add pin to more boards
                                             break;
                                         case 2:
-                                            deletePin(getAdapterPosition(), pin.getPinID());
                                             break;
                                     }
                                 }
@@ -165,50 +163,8 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> impl
         FragmentManager fm = activity.getFragmentManager();
 
         ChangePinFragment changePinFragment = new ChangePinFragment();
-        changePinFragment.setListener(PinAdapter.this);
         changePinFragment.setArguments(bundle);
 
         changePinFragment.show(fm, "ChangePinFragment");
-    }
-
-    // Callback from changing the pin
-    @Override
-    public void onChanged(final int adapterPosition, final String pinName, String pinID, final String pinTags)
-    {
-        ParsePin parsePin = new ParsePin();
-        parsePin.updatePin(pinID, pinName, pinTags, new ParsePin.ParsePinCallback()
-        {
-            @Override
-            public void onSuccess(String result)
-            {
-                Log.i(TAG, result);
-                notifyItemChanged(adapterPosition);
-            }
-
-            @Override
-            public void onFail(String result)
-            {
-                Log.i(TAG, result);
-            }
-        });
-    }
-
-    public void deletePin(final int adapterPosition, String pinID)
-    {
-        ParsePin parsePin = new ParsePin();
-        parsePin.deletePin(pinID, new ParsePin.ParsePinCallback()
-        {
-            @Override
-            public void onSuccess(String result)
-            {
-                notifyItemRemoved(adapterPosition);
-            }
-
-            @Override
-            public void onFail(String result)
-            {
-
-            }
-        });
     }
 }

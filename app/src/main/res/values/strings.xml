@@ -16,4 +16,5 @@
     <string name="save">Save</string>
     <string name="change_pin">Change Pin</string>
     <string name="expand_view">expandViewTransition</string>
+    <string name="add_board">Add Board</string>
 </resources>

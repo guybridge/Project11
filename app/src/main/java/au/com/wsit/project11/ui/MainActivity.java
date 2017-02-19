@@ -26,23 +26,30 @@ import android.view.View;
 
 
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.security.acl.Permission;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.adapters.BoardAdapter;
-import au.com.wsit.project11.api.ListBoard;
-import au.com.wsit.project11.api.ParseBoard;
+import au.com.wsit.project11.api.BoardHelper;
 import au.com.wsit.project11.models.Board;
+import au.com.wsit.project11.models.Pin;
 import au.com.wsit.project11.ui.fragments.AddBoardFragment;
 import au.com.wsit.project11.utils.Constants;
 import au.com.wsit.project11.utils.FileHelper;
 import au.com.wsit.project11.utils.Permissions;
 
 public class MainActivity extends AppCompatActivity
-        implements AddBoardFragment.CreateBoardCallback,
-        BoardAdapter.NotifyBoardChanges
+        implements AddBoardFragment.CreateBoardCallback
 {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -50,10 +57,11 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView boardRecycler;
     private RecyclerView.LayoutManager layoutManager;
     private BoardAdapter boardAdapter;
-    private TextView errorTextView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Uri mediaUri;
-
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,7 +76,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle("");
 
         boardRecycler = (RecyclerView) findViewById(R.id.boardRecyclerView);
-        errorTextView = (TextView) findViewById(R.id.errorTextView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         layoutManager = new LinearLayoutManager(this);
@@ -76,31 +83,73 @@ public class MainActivity extends AppCompatActivity
         boardAdapter = new BoardAdapter(this);
         boardRecycler.setAdapter(boardAdapter);
 
+        // Firebase setup
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("boards");
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
             @Override
             public void onRefresh()
             {
-                getData();
+                getBoards();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
+        getBoards();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+    }
+
+    // Get the boards
+    private void getBoards()
+    {
+        if(childEventListener == null)
         {
-            @Override
-            public void onClick(View view)
+            childEventListener = new ChildEventListener()
             {
-                android.app.FragmentManager fm = getFragmentManager();
-                AddBoardFragment addBoardFragment = new AddBoardFragment();
-                addBoardFragment.show(fm, "AddBoardFragment");
-            }
-        });
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s)
+                {
+                    Board boardData = dataSnapshot.getValue(Board.class);
+                    boardAdapter.add(boardData);
+                    Log.i(TAG, "onChildAdded called " + boardData.getBoardTitle());
+                    boardRecycler.scrollToPosition(0);
+                }
 
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s)
+                {
 
-        getData();
+                }
 
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot)
+                {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s)
+                {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError)
+                {
+
+                }
+            };
+
+            databaseReference.addChildEventListener(childEventListener);
+        }
 
     }
 
@@ -121,66 +170,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void getData()
-    {
-        swipeRefreshLayout.setRefreshing(true);
-        // Get data
-        ListBoard listBoard = new ListBoard(this);
-        listBoard.getBoards(new ListBoard.ListBoardCallback()
-        {
-            @Override
-            public void onSuccess(ArrayList<Board> boards)
-            {
-                if(boards.size() == 0)
-                {
-                    Log.i(TAG, "No boards yet");
-                    showEmptyView();
-                }
-                else
-                {
-                    swipeRefreshLayout.setRefreshing(false);
-                    errorTextView.setVisibility(View.GONE);
-                    boardAdapter.swap(boards);
-                }
-
-            }
-
-            @Override
-            public void onFail(String result)
-            {
-                toggleErrorView();
-            }
-        });
-
-    }
-
-    private void toggleErrorView()
-    {
-        runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                swipeRefreshLayout.setRefreshing(false);
-                errorTextView.setVisibility(View.VISIBLE);
-                errorTextView.setText(R.string.board_error);
-            }
-        });
-    }
-
-    private void showEmptyView()
-    {
-        runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                swipeRefreshLayout.setRefreshing(false);
-                errorTextView.setVisibility(View.VISIBLE);
-                errorTextView.setText(R.string.add_boards);
-            }
-        });
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -206,48 +195,58 @@ public class MainActivity extends AppCompatActivity
                 // Add new pin
                 startChooser();
                 break;
+            case R.id.action_add_board:
+                android.app.FragmentManager fm = getFragmentManager();
+                AddBoardFragment addBoardFragment = new AddBoardFragment();
+                addBoardFragment.show(fm, "AddBoardFragment");
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     private void startChooser()
     {
-        // Start a dialog to check which type of media to take
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(R.array.camera_choices, new DialogInterface.OnClickListener()
+        // First check permissions
+        Permissions permissions = new Permissions(MainActivity.this);
+        permissions.requestCameraPermissions(new Permissions.PermissionsCallback()
         {
             @Override
-            public void onClick(DialogInterface dialog, int which)
+            public void onGranted()
             {
-                switch(which)
+                // Now start the chooser.
+                // Start a dialog to check which type of media to take
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setItems(R.array.camera_choices, new DialogInterface.OnClickListener()
                 {
-                    case 0:
-                        // Take photo
-                        Permissions permissions = new Permissions(MainActivity.this);
-                        permissions.requestCameraPermissions(new Permissions.PermissionsCallback()
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        switch(which)
                         {
-                            @Override
-                            public void onGranted()
-                            {
+                            case 0:
                                 takePhoto();
-                            }
+                                break;
+                            case 1:
+                                // Take video
+                                break;
+                        }
+                    }
+                });
 
-                            @Override
-                            public void onDenied()
-                            {
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
-                            }
-                        });
-                        break;
-                    case 1:
-                        // Take video
-                        break;
-                }
+            }
+
+            @Override
+            public void onDenied()
+            {
+                Snackbar.make(mainLayout, "Permissions denied", Snackbar.LENGTH_LONG).show();
             }
         });
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+
     }
 
     private void takePhoto()
@@ -269,47 +268,19 @@ public class MainActivity extends AppCompatActivity
 
     // Result of the adding of the image from the dialog fragment
     @Override
-    public void onSuccess(String boardName, int mediaUri)
+    public void onAddBoardSuccess(final String boardTitle)
     {
-        ParseBoard parseBoard = new ParseBoard();
-        parseBoard.addBoard(boardName, mediaUri, new ParseBoard.ParseBoardCallback()
+        BoardHelper boardHelper = new BoardHelper();
+        boardHelper.addBoard(boardTitle, null, new BoardHelper.Callback()
         {
             @Override
-            public void onSuccess(String result)
+            public void onSuccess()
             {
-                Snackbar.make(mainLayout, "Added new board " + result, Snackbar.LENGTH_LONG).show();
-                getData();
+                Snackbar.make(mainLayout, "Added " + boardTitle, Snackbar.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFail(String result)
-            {
-                Snackbar.make(mainLayout, result, Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    @Override
-    public void onFail(String result)
-    {
-
-    }
-
-    // Notify the adapter of board changes
-    @Override
-    public void onChanged()
-    {
-        ListBoard listBoard = new ListBoard(this);
-        listBoard.getBoards(new ListBoard.ListBoardCallback()
-        {
-            @Override
-            public void onSuccess(ArrayList<Board> boards)
-            {
-                boardAdapter.swap(boards);
-            }
-
-            @Override
-            public void onFail(String result)
+            public void onFail(String errorMessage)
             {
 
             }
@@ -317,27 +288,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+    public void onAddBoardFail(String result)
     {
-        Log.i(TAG, "onRequestPermissionsResult called");
-        switch (requestCode)
-        {
-            case Constants.PERMISSIONS_REQUEST:
-            {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    // permission was granted, yay!
-                    takePhoto();
-                }
-                else
-                {
 
-                }
-
-                break;
-            }
-
-        }
     }
 }

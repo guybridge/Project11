@@ -11,18 +11,13 @@ public class Pin
     private String pinTitle;
     private String pinComment;
     private String pinTags;
-    private String pinID;
 
-    public String getPinID()
+    public Pin(String pinTitle, String pinComment, String pinTags, String mediaUrl)
     {
-        return pinID;
+        this.mediaUrl = mediaUrl;
+        this.pinTitle = pinTitle;
+        this.pinComment = pinComment;
     }
-
-    public void setPinID(String pinID)
-    {
-        this.pinID = pinID;
-    }
-
 
     public String getMediaUrl()
     {

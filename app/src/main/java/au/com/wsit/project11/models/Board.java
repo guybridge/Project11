@@ -1,6 +1,5 @@
 package au.com.wsit.project11.models;
 
-import java.util.ArrayList;
 
 /**
  * Created by guyb on 3/01/17.
@@ -9,21 +8,18 @@ import java.util.ArrayList;
 public class Board
 {
     private String boardTitle;
-    private int ImageUrl;
-    private ArrayList<Pin> boardPins;
-    private String boardID;
+    private String imageUrl;
 
-    public String getBoardID()
+    public Board()
     {
-        return boardID;
+
     }
 
-    public void setBoardID(String boardID)
+    public Board(String boardTitle, String imageUrl)
     {
-        this.boardID = boardID;
+        this.boardTitle = boardTitle;
+        this.imageUrl = imageUrl;
     }
-
-
 
     public String getBoardTitle()
     {
@@ -35,23 +31,14 @@ public class Board
         this.boardTitle = boardTitle;
     }
 
-    public int getImageUrl()
+    public String getImageUrl()
     {
-        return ImageUrl;
+        return imageUrl;
     }
 
-    public void setImageUrl(int imageUrl)
+    public void setImageUrl(String imageUrl)
     {
-        ImageUrl = imageUrl;
+        this.imageUrl = imageUrl;
     }
 
-    public ArrayList<Pin> getBoardPins()
-    {
-        return boardPins;
-    }
-
-    public void setBoardPins(ArrayList<Pin> boardPins)
-    {
-        this.boardPins = boardPins;
-    }
 }

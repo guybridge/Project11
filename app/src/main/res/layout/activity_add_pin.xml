@@ -3,43 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-
+    android:layout_height="wrap_content">
 
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
     android:id="@+id/activity_add_pin"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="au.com.wsit.project11.ui.AddPinActivity">
 
-    <RelativeLayout
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"/>
-
         <ImageView
             android:id="@+id/pinImageView"
-            android:scaleType="center"
+            android:scaleType="centerCrop"
             android:src="@drawable/asset1"
-            android:layout_width="170dp"
-            android:layout_height="256dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
+            android:layout_width="match_parent"
+            android:layout_height="256dp"/>
 
     <EditText
         android:hint="@string/title"
@@ -71,5 +50,4 @@
     </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
-
 </ScrollView>
