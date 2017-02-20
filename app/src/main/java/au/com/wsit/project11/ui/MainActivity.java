@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -178,7 +179,17 @@ public class MainActivity extends AppCompatActivity
                 Log.i(TAG, "Uri is: " + mediaUri);
                 Intent addPinIntent = new Intent(this, AddPinActivity.class);
                 addPinIntent.setData(mediaUri);
+                addPinIntent.putExtra(Constants.MEDIA_TYPE, Constants.MEDIA_TYPE_IMAGE);
                 startActivity(addPinIntent);
+            }
+            else if(requestCode == Constants.TAKE_VIDEO_REQUEST)
+            {
+                Log.i(TAG, "Took a video");
+                Log.i(TAG, "Uri is: " + mediaUri);
+                Intent addVideoIntent = new Intent(this, AddPinActivity.class);
+                addVideoIntent.setData(mediaUri);
+                addVideoIntent.putExtra(Constants.MEDIA_TYPE, Constants.MEDIA_TYPE_VIDEO);
+                startActivity(addVideoIntent);
             }
         }
     }
@@ -205,10 +216,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_settings:
                 break;
             case R.id.action_start_camera:
-                // Add new pin
+                // Start a chooser to show camera or video choice
                 startChooser();
                 break;
             case R.id.action_add_board:
+                // Add a new board
                 android.app.FragmentManager fm = getFragmentManager();
                 AddBoardFragment addBoardFragment = new AddBoardFragment();
                 addBoardFragment.show(fm, "AddBoardFragment");
@@ -241,7 +253,7 @@ public class MainActivity extends AppCompatActivity
                                 takePhoto();
                                 break;
                             case 1:
-                                // Take video
+                                takeVideo();
                                 break;
                         }
                     }
@@ -259,6 +271,24 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
+    }
+
+    private void takeVideo()
+    {
+        FileHelper fileHelper = new FileHelper(this);
+        mediaUri = fileHelper.getOutputMediaFileUri(Constants.MEDIA_TYPE_VIDEO);
+
+        if (mediaUri == null)
+        {
+            Snackbar.make(mainLayout, "There was a problem accessing your external storage", Snackbar.LENGTH_LONG).show();
+        }
+        else
+        {
+            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
+            startActivityForResult(intent, Constants.TAKE_VIDEO_REQUEST);
+        }
 
     }
 

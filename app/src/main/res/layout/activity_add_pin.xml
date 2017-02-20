@@ -20,6 +20,11 @@
             android:layout_width="match_parent"
             android:layout_height="256dp"/>
 
+    <VideoView
+        android:id="@+id/pinVideoView"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"/>
+
     <EditText
         android:hint="@string/title"
         android:layout_gravity="center_horizontal"

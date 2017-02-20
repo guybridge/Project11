@@ -31,4 +31,5 @@ public class Constants
     public static final String PINS = "pins";
     public static final String BOARDS = "boards";
 
+    public static final String MEDIA_TYPE = "media_type";
 }
