@@ -12,11 +12,18 @@ public class Pin
     private String pinComment;
     private String pinTags;
 
+    public Pin()
+    {
+
+    }
+
     public Pin(String pinTitle, String pinComment, String pinTags, String mediaUrl)
     {
-        this.mediaUrl = mediaUrl;
         this.pinTitle = pinTitle;
         this.pinComment = pinComment;
+        this.pinTags = pinTags;
+        this.mediaUrl = mediaUrl;
+
     }
 
     public String getMediaUrl()

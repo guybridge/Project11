@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,19 +99,12 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
         private void bindViewHolder(final Board board)
         {
             boardTitle.setText(board.getBoardTitle());
-            try
-            {
-                Picasso.with(context).load(board.getImageUrl()).into(boardImage);
-            }
-            catch(IllegalArgumentException e)
-            {
-                Log.i(TAG, "Error setting board image " + e.getMessage());
-                Picasso.with(context).load(Generator.getRandomImage()).into(boardImage);
-            }
-            pinRecycler.setLayoutManager(new ScrollessLayoutManager(2, 0));
+            Picasso.with(context).load(board.getImageUrl()).into(boardImage);
+
+            pinRecycler.setLayoutManager(new ScrollessLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             pinAdapter = new PinAdapter(context);
             pinRecycler.setAdapter(pinAdapter);
-            //pinAdapter.swap(board.getBoardPins());
+            pinAdapter.swap(board.getPins());
 
             itemView.setOnClickListener(new View.OnClickListener()
             {

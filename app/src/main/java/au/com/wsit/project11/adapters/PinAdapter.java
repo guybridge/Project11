@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.models.Pin;
@@ -50,11 +51,16 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
         return viewHolder;
     }
 
-    public void swap(ArrayList<Pin> pins)
+    public void swap(Map<String, Pin> pinsMapData)
     {
-        if(pins != null)
+        if(pinsMapData != null)
         {
-            this.pins = pins;
+
+            for(Map.Entry<String, Pin> pin : pinsMapData.entrySet())
+            {
+                pins.add(pin.getValue());
+            }
+
             notifyDataSetChanged();
         }
     }
@@ -85,7 +91,6 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             pinComment = (TextView) itemView.findViewById(R.id.pinComment);
             pinTags = (TextView) itemView.findViewById(R.id.pinTags);
             pinImage = (ImageView) itemView.findViewById(R.id.pinImage);
-
 
         }
 

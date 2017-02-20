@@ -32,11 +32,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.adapters.BoardAdapter;
@@ -117,10 +119,26 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s)
                 {
-                    Board boardData = dataSnapshot.getValue(Board.class);
-                    boardAdapter.add(boardData);
-                    Log.i(TAG, "onChildAdded called " + boardData.getBoardTitle());
-                    boardRecycler.scrollToPosition(0);
+                    try
+                    {
+                        Board boardData = dataSnapshot.getValue(Board.class);
+                        boardAdapter.add(boardData);
+                        boardRecycler.scrollToPosition(0);
+
+                        Log.i(TAG, "Got board: " + boardData.getBoardTitle());
+
+                        for(Map.Entry<String,Pin> pin : boardData.getPins().entrySet())
+                        {
+                            Log.i(TAG, "pin name " + pin.getValue().getPinTitle());
+                            Log.i(TAG, "pin media Url : " + pin.getValue().getMediaUrl());
+                        }
+
+                    }
+                    catch(DatabaseException e)
+                    {
+                        Snackbar.make(mainLayout, "Add some boards", Snackbar.LENGTH_LONG).show();
+                    }
+
                 }
 
                 @Override

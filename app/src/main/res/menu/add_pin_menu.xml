@@ -3,7 +3,7 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="au.com.wsit.project11.ui.MainActivity">
     <item
-        android:icon="@mipmap/ic_done_white_48dp"
+        android:icon="@mipmap/ic_action_file_upload"
         android:id="@+id/action_save_pin"
         android:orderInCategory="100"
         android:title="@string/action_save"

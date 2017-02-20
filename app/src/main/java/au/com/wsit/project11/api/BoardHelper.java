@@ -39,7 +39,7 @@ public class BoardHelper
     public void addBoard(String boardTitle, String imageUrl, final Callback callback)
     {
         // Create a board object
-        Board board = new Board(boardTitle, imageUrl);
+        Board board = new Board(boardTitle, imageUrl, null);
         databaseReference.child(boardTitle).setValue(board).addOnSuccessListener(new OnSuccessListener<Void>()
         {
             @Override
