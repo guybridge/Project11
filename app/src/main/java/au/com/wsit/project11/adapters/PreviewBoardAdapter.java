@@ -8,7 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
 
@@ -19,21 +23,28 @@ import au.com.wsit.project11.R;
 public class PreviewBoardAdapter extends RecyclerView.Adapter<PreviewBoardAdapter.ViewHolder>
 {
     private OnItemClickListener listener;
+    private Context context;
+    private ArrayList<String> pinUrls = new ArrayList<>();
+    private static final String TAG = PreviewBoardAdapter.class.getSimpleName();
 
     public interface OnItemClickListener
     {
-        void onItemClick(int resourceLocation);
+        void onItemClick(String resourceLocation);
     }
 
-    private Context context;
-    private int[] boardItems;
-    private static final String TAG = PreviewBoardAdapter.class.getSimpleName();
-
-    public PreviewBoardAdapter(Context context, OnItemClickListener listener, int[] boardItems)
+    public PreviewBoardAdapter(Context context, OnItemClickListener listener)
     {
         this.context = context;
-        this.boardItems = boardItems;
         this.listener = listener;
+    }
+
+    public void add(String url)
+    {
+        if(url != null)
+        {
+            pinUrls.add(url);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -49,13 +60,13 @@ public class PreviewBoardAdapter extends RecyclerView.Adapter<PreviewBoardAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        holder.bindViewHolder(boardItems[position]);
+        holder.bindViewHolder(pinUrls.get(position));
     }
 
     @Override
     public int getItemCount()
     {
-        return boardItems.length;
+        return pinUrls.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -66,14 +77,12 @@ public class PreviewBoardAdapter extends RecyclerView.Adapter<PreviewBoardAdapte
         {
             super(itemView);
             previewImage = (ImageView) itemView.findViewById(R.id.previewPhoto);
-
-
         }
 
-        private void bindViewHolder(final int image)
+        private void bindViewHolder(final String pinUrl)
         {
             Log.i(TAG, "Showing images");
-            Picasso.with(context).load(image).into(previewImage);
+            Picasso.with(context).load(pinUrl).into(previewImage);
 
             itemView.setOnClickListener(new View.OnClickListener()
             {
@@ -83,7 +92,7 @@ public class PreviewBoardAdapter extends RecyclerView.Adapter<PreviewBoardAdapte
                     // Animate the click
                     previewImage.setAlpha(0.2f);
                     previewImage.animate().alpha(1f).start();
-                    listener.onItemClick(image);
+                    listener.onItemClick(pinUrl);
                 }
             });
         }

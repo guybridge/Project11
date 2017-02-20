@@ -124,14 +124,7 @@ public class MainActivity extends AppCompatActivity
                         Board boardData = dataSnapshot.getValue(Board.class);
                         boardAdapter.add(boardData);
                         boardRecycler.scrollToPosition(0);
-
                         Log.i(TAG, "Got board: " + boardData.getBoardTitle());
-
-                        for(Map.Entry<String,Pin> pin : boardData.getPins().entrySet())
-                        {
-                            Log.i(TAG, "pin name " + pin.getValue().getPinTitle());
-                            Log.i(TAG, "pin media Url : " + pin.getValue().getMediaUrl());
-                        }
 
                     }
                     catch(DatabaseException e)
@@ -144,7 +137,9 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s)
                 {
-
+                    Board boardData = dataSnapshot.getValue(Board.class);
+                    Log.i(TAG, "Board: " + boardData.getBoardTitle() + " changed one of its pins");
+                    boardAdapter.replace(boardData);
                 }
 
                 @Override
@@ -286,10 +281,10 @@ public class MainActivity extends AppCompatActivity
 
     // Result of the adding of the image from the dialog fragment
     @Override
-    public void onAddBoardSuccess(final String boardTitle)
+    public void onAddBoardSuccess(final String boardTitle, String coverUrl)
     {
         BoardHelper boardHelper = new BoardHelper();
-        boardHelper.addBoard(boardTitle, null, new BoardHelper.Callback()
+        boardHelper.addBoard(boardTitle, coverUrl, new BoardHelper.Callback()
         {
             @Override
             public void onSuccess()

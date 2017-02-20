@@ -27,7 +27,6 @@ public class BoardHelper
     {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("boards");
-
     }
 
     public interface Callback

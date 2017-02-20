@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
@@ -54,6 +61,27 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
         {
             this.boards.add(0, board);
             notifyItemInserted(0);
+        }
+    }
+
+    // Replace the board item at a certain index.
+    public void replace(Board newBoard)
+    {
+        if(newBoard != null)
+        {
+            // Find the index of the current board
+            for (int i = 0; i < boards.size(); i++)
+            {
+                if(boards.get(i).getBoardTitle().equals(newBoard.getBoardTitle()))
+                {
+                    Log.i(TAG, "Board found at index " + i);
+                    // Remove the board
+                    boards.remove(i);
+                    // Add the new board at the same index
+                    boards.add(i,newBoard);
+                    notifyItemChanged(i);
+                }
+            }
         }
     }
 
@@ -149,6 +177,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
                     return true;
                 }
             });
+
         }
 
 
