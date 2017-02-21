@@ -5,7 +5,9 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AlertDialog;
@@ -15,7 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
@@ -80,9 +84,11 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         private ImageView pinImage;
+        private VideoView pinVideo;
         private TextView pinTitle;
         private TextView pinComment;
         private TextView pinTags;
+        private String mediaType;
 
         public ViewHolder(View itemView)
         {
@@ -91,7 +97,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             pinComment = (TextView) itemView.findViewById(R.id.pinComment);
             pinTags = (TextView) itemView.findViewById(R.id.pinTags);
             pinImage = (ImageView) itemView.findViewById(R.id.pinImage);
-
+            pinVideo = (VideoView)itemView.findViewById(R.id.pinVideo);
         }
 
         private void bindViewHolder(final Pin pin)
@@ -99,27 +105,65 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
             pinTitle.setText(pin.getPinTitle());
             pinComment.setText(pin.getPinTitle());
             pinTags.setText(pin.getPinTags());
-            Picasso.with(context).load(pin.getMediaUrl()).into(pinImage);
 
-            itemView.setOnClickListener(new View.OnClickListener()
+            // Check for video or image
+            mediaType = pin.getMediaType();
+            if(mediaType == null)
             {
-                @Override
-                public void onClick(View v)
-                {
-                    // Animate the shared element transition
-                    View sharedElement = pinImage;
-                    String transitionName = context.getString(R.string.expand_view);
-                    ActivityOptionsCompat options =
-                            ActivityOptionsCompat
-                                    .makeSceneTransitionAnimation
-                                            ((Activity)context, sharedElement, transitionName);
+                mediaType = Constants.TYPE_IMAGE;
+            }
 
-                    Intent intent = new Intent(context, LargePinActivity.class);
-                    intent.putExtra(Constants.KEY_PIN_IMAGE_URL, pin.getMediaUrl());
-                    intent.putExtra(Constants.KEY_PIN_TITLE, pin.getPinTitle());
-                    ActivityCompat.startActivity(context, intent, options.toBundle());
-                }
-            });
+
+            if(mediaType.equals(Constants.TYPE_VIDEO))
+            {
+                Log.i(TAG, "Media is type video");
+                Log.i(TAG, "media URI is: " + pin.getMediaUrl());
+                // Hide the imageView
+                pinImage.setVisibility(View.GONE);
+                pinVideo.setMediaController(null);
+                pinVideo.setVideoURI(Uri.parse(pin.getMediaUrl()));
+
+                // Play the video onClick
+                itemView.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        pinVideo.start();
+                        Log.i(TAG, "Video play starting");
+                    }
+                });
+            }
+            else
+            {
+                Log.i(TAG, "Pin is type image");
+                // Load the image and hide the video
+                Picasso.with(context).load(pin.getMediaUrl()).into(pinImage);
+                pinVideo.setVisibility(View.GONE);
+
+                // Expand the image if it's an image
+                itemView.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Log.i(TAG, "Show large image");
+                        // Animate the shared element transition
+                        View sharedElement = pinImage;
+                        String transitionName = context.getString(R.string.expand_view);
+                        ActivityOptionsCompat options =
+                                ActivityOptionsCompat
+                                        .makeSceneTransitionAnimation
+                                                ((Activity)context, sharedElement, transitionName);
+
+                        Intent intent = new Intent(context, LargePinActivity.class);
+                        intent.putExtra(Constants.KEY_PIN_IMAGE_URL, pin.getMediaUrl());
+                        intent.putExtra(Constants.KEY_PIN_TITLE, pin.getPinTitle());
+                        ActivityCompat.startActivity(context, intent, options.toBundle());
+                    }
+                });
+            }
+
 
             itemView.setOnLongClickListener(new View.OnLongClickListener()
             {

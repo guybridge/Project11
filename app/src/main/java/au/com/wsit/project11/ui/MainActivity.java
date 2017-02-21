@@ -126,11 +126,12 @@ public class MainActivity extends AppCompatActivity
                         boardAdapter.add(boardData);
                         boardRecycler.scrollToPosition(0);
                         Log.i(TAG, "Got board: " + boardData.getBoardTitle());
-
                     }
                     catch(DatabaseException e)
                     {
                         Snackbar.make(mainLayout, "Add some boards", Snackbar.LENGTH_LONG).show();
+                        swipeRefreshLayout.setRefreshing(false);
+
                     }
 
                 }
@@ -221,6 +222,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.action_add_board:
                 // Add a new board
+                Log.i(TAG, "Adding new board");
                 android.app.FragmentManager fm = getFragmentManager();
                 AddBoardFragment addBoardFragment = new AddBoardFragment();
                 addBoardFragment.show(fm, "AddBoardFragment");

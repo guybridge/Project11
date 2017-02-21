@@ -68,6 +68,7 @@ public class AddPinActivity extends AppCompatActivity implements SimpleBoardAdap
     private DatabaseReference boardsDatabaseReference;
     private FirebaseDatabase firebaseDatabase;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -162,6 +163,9 @@ public class AddPinActivity extends AppCompatActivity implements SimpleBoardAdap
 
     private void savePin()
     {
+        // Show progress
+        Snackbar.make(linearLayout, "Uploading", Snackbar.LENGTH_INDEFINITE).show();
+
         // Get the editText data
         final String title = pinTitle.getText().toString().trim();
         final String comment = pinComment.getText().toString().trim();
@@ -187,7 +191,7 @@ public class AddPinActivity extends AppCompatActivity implements SimpleBoardAdap
                         // Once save then link the photo the boards that were selected
                         for(String boardName : boardNames)
                         {
-                            Pin pin = new Pin(title, comment, tags, taskSnapshot.getDownloadUrl().toString());
+                            Pin pin = new Pin(title, comment, tags, taskSnapshot.getDownloadUrl().toString(), Constants.TYPE_VIDEO);
                             boardsDatabaseReference.child(boardName).child(Constants.PINS).push().setValue(pin);
                         }
                         Snackbar.make(linearLayout, "Saved new video pin", Snackbar.LENGTH_LONG).show();
@@ -213,7 +217,7 @@ public class AddPinActivity extends AppCompatActivity implements SimpleBoardAdap
                         // Once save then link the photo the boards that were selected
                         for(String boardName : boardNames)
                         {
-                            Pin pin = new Pin(title, comment, tags, taskSnapshot.getDownloadUrl().toString());
+                            Pin pin = new Pin(title, comment, tags, taskSnapshot.getDownloadUrl().toString(), Constants.TYPE_IMAGE);
                             boardsDatabaseReference.child(boardName).child(Constants.PINS).push().setValue(pin);
                         }
 

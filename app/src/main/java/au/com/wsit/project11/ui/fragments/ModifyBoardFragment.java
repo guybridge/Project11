@@ -5,9 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,13 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -33,17 +30,16 @@ import au.com.wsit.project11.adapters.PreviewBoardAdapter;
 import au.com.wsit.project11.models.Board;
 import au.com.wsit.project11.models.Pin;
 import au.com.wsit.project11.utils.Constants;
-import au.com.wsit.project11.utils.Generator;
 
 /**
  *  This fragment is used to add a new board and also to edit the board attributes
  */
 
-public class AddBoardFragment extends DialogFragment implements PreviewBoardAdapter.OnItemClickListener
+public class ModifyBoardFragment extends DialogFragment implements PreviewBoardAdapter.OnItemClickListener
 {
-    private static final String TAG = AddBoardFragment.class.getSimpleName();
-    private CreateBoardCallback createBoardCallback;
+    private static final String TAG = ModifyBoardFragment.class.getSimpleName();
     private EditText boardTitle;
+    private Button saveButton;
 
     private PreviewBoardAdapter previewBoardAdapter;
     private RecyclerView recyclerView;
@@ -52,6 +48,9 @@ public class AddBoardFragment extends DialogFragment implements PreviewBoardAdap
     private DatabaseReference databaseReference;
 
     private String boardCoverUrl;
+    private String currentBoardName;
+    private int boardIndex;
+    private ArrayList<Board> boardsList = new ArrayList<>();
 
     // The callback from clicking on an image in the gridView
     @Override
@@ -60,56 +59,83 @@ public class AddBoardFragment extends DialogFragment implements PreviewBoardAdap
         Log.i(TAG, "Clicked on " + resourceLocation);
         boardCoverUrl = resourceLocation;
 
-        if(boardTitle.getText().toString().equals(""))
+        if (boardTitle.getText().toString().equals(""))
         {
-            Toast.makeText(getActivity(), "Boards need a name", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Board need a name", Toast.LENGTH_LONG).show();
         }
         else
         {
-            createBoardCallback.onAddBoardSuccess(boardTitle.getText().toString(), boardCoverUrl);
-            dismiss();
-        }
+            for (int i = 0; i < boardsList.size(); i++)
+            {
+                if(currentBoardName.equals(boardsList.get(0).getBoardTitle()))
+                {
+                    Log.i(TAG, "board found at index: " + i);
+                    boardIndex = i;
+                }
+            }
+            // Update the board with it's name and it's pins
+            final Board board = new Board(boardTitle.getText().toString(), boardCoverUrl, boardsList.get(boardIndex).getPins());
 
-    }
+            // Remove the old board
+            databaseReference.child(currentBoardName).removeValue().addOnSuccessListener(new OnSuccessListener<Void>()
+            {
+                @Override
+                public void onSuccess(Void aVoid)
+                {
+                    // Add the new board
+                    databaseReference.child(boardTitle.getText().toString()).setValue(board).addOnSuccessListener(new OnSuccessListener<Void>()
+                    {
+                        @Override
+                        public void onSuccess(Void aVoid)
+                        {
+                            dismiss();
+                        }
+                    });
+                }
+            });
 
-    public interface CreateBoardCallback
-    {
-        void onAddBoardSuccess(String boardTitle, String coverUrl);
-        void onAddBoardFail(String result);
-    }
-
-    @Override
-    public void onAttach(Context context)
-    {
-        super.onAttach(context);
-        createBoardCallback = (CreateBoardCallback) context;
-    }
-
-    // API 19
-    @Override
-    public void onAttach(Activity activity)
-    {
-        super.onAttach(activity);
-        createBoardCallback = (CreateBoardCallback) activity;
+            }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_add_board, container, false);
+        View view = inflater.inflate(R.layout.fragment_modify_board, container, false);
 
         boardTitle = (EditText) view.findViewById(R.id.boardNameEditText);
         recyclerView = (RecyclerView) view.findViewById(R.id.previewRecycler);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         previewBoardAdapter = new PreviewBoardAdapter(getActivity(), this);
         recyclerView.setAdapter(previewBoardAdapter);
+        saveButton = (Button) view.findViewById(R.id.saveButton);
 
         // Get an instance to Firebase to display images from the collection
         this.firebaseDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = firebaseDatabase.getReference().child(Constants.BOARDS);
 
+        // Get all the pins
         getAllPins();
+
+        try
+        {
+            Bundle bundle = getArguments();
+            currentBoardName = bundle.getString(Constants.KEY_BOARD_NAME);
+            boardTitle.setText(currentBoardName);
+        }
+        catch (NullPointerException e)
+        {
+
+        }
+
+        saveButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+            }
+        });
 
 
         return view;
@@ -123,6 +149,7 @@ public class AddBoardFragment extends DialogFragment implements PreviewBoardAdap
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 Board board = dataSnapshot.getValue(Board.class);
+                boardsList.add(board);
 
                 for(Map.Entry<String,Pin> pins : board.getPins().entrySet())
                 {

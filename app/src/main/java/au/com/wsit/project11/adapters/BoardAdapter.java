@@ -17,17 +17,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import au.com.wsit.project11.R;
 import au.com.wsit.project11.models.Board;
 import au.com.wsit.project11.ui.fragments.AddBoardFragment;
+import au.com.wsit.project11.ui.fragments.ModifyBoardFragment;
 import au.com.wsit.project11.utils.Constants;
 import au.com.wsit.project11.utils.Generator;
 
@@ -40,9 +43,13 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
     private Context context;
     private ArrayList<Board> boards = new ArrayList<>();
     private static final String TAG = BoardAdapter.class.getSimpleName();
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     public BoardAdapter(Context context)
     {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child(Constants.BOARDS);
         this.context = context;
     }
 
@@ -166,7 +173,7 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
                                             break;
                                         case 1:
                                             // Delete the board
-                                            deleteBoard(getAdapterPosition(), null);
+                                            deleteBoard(getAdapterPosition(), board.getBoardTitle());
                                             break;
                                     }
                                 }
@@ -201,9 +208,10 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
     }
 
     // Deletes a board
-    private void deleteBoard(final int adapterPosition, String boardID)
+    private void deleteBoard(final int adapterPosition, String boardName)
     {
-
+        databaseReference.child(boardName).removeValue();
+        notifyItemRemoved(adapterPosition);
     }
 
     private void showsPhotosChooser(int adapterPosition, String boardID, String boardName)
@@ -214,9 +222,9 @@ public class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder>
         bundle.putString(Constants.KEY_BOARD_ID, boardID);
         bundle.putInt(Constants.KEY_BOARD_POSITION, adapterPosition);
         FragmentManager fm = activity.getFragmentManager();
-        AddBoardFragment updateBoardFragment = new AddBoardFragment();
-        updateBoardFragment.setArguments(bundle);
-        updateBoardFragment.show(fm, "ChangeAttributes");
+        ModifyBoardFragment modifyBoardFragment = new ModifyBoardFragment();
+        modifyBoardFragment.setArguments(bundle);
+        modifyBoardFragment.show(fm, "ChangeAttributes");
     }
 
 }

@@ -54,6 +54,8 @@ public class PreviewBoardAdapter extends RecyclerView.Adapter<PreviewBoardAdapte
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.small_board_item, parent, false);
         PreviewBoardAdapter.ViewHolder viewHolder = new ViewHolder(view);
 
+
+
         return viewHolder;
     }
 
@@ -93,6 +95,7 @@ public class PreviewBoardAdapter extends RecyclerView.Adapter<PreviewBoardAdapte
                     previewImage.setAlpha(0.2f);
                     previewImage.animate().alpha(1f).start();
                     listener.onItemClick(pinUrl);
+
                 }
             });
         }

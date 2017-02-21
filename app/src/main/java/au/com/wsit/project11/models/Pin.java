@@ -11,19 +11,30 @@ public class Pin
     private String pinTitle;
     private String pinComment;
     private String pinTags;
+    private String mediaType;
 
     public Pin()
     {
 
     }
 
-    public Pin(String pinTitle, String pinComment, String pinTags, String mediaUrl)
+    public Pin(String pinTitle, String pinComment, String pinTags, String mediaUrl, String mediaType)
     {
         this.pinTitle = pinTitle;
         this.pinComment = pinComment;
         this.pinTags = pinTags;
         this.mediaUrl = mediaUrl;
+        this.mediaType = mediaType;
+    }
 
+    public String getMediaType()
+    {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType)
+    {
+        this.mediaType = mediaType;
     }
 
     public String getMediaUrl()

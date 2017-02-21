@@ -6,12 +6,14 @@
     android:layout_height="wrap_content">
 
 <LinearLayout
-
     android:id="@+id/activity_add_pin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context="au.com.wsit.project11.ui.AddPinActivity">
+
+
+
 
         <ImageView
             android:id="@+id/pinImageView"
@@ -20,9 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="256dp"/>
 
+
     <VideoView
         android:id="@+id/pinVideoView"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="256dp"/>
 
     <EditText
@@ -55,4 +58,6 @@
     </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
+
+
 </ScrollView>
