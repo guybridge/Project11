@@ -59,6 +59,11 @@ public class ModifyBoardFragment extends DialogFragment implements PreviewBoardA
         Log.i(TAG, "Clicked on " + resourceLocation);
         boardCoverUrl = resourceLocation;
 
+        saveChanges();
+    }
+
+    private void saveChanges()
+    {
         if (boardTitle.getText().toString().equals(""))
         {
             Toast.makeText(getActivity(), "Board need a name", Toast.LENGTH_LONG).show();
@@ -67,7 +72,7 @@ public class ModifyBoardFragment extends DialogFragment implements PreviewBoardA
         {
             for (int i = 0; i < boardsList.size(); i++)
             {
-                if(currentBoardName.equals(boardsList.get(0).getBoardTitle()))
+                if(currentBoardName.equals(boardsList.get(i).getBoardTitle()))
                 {
                     Log.i(TAG, "board found at index: " + i);
                     boardIndex = i;
@@ -133,7 +138,7 @@ public class ModifyBoardFragment extends DialogFragment implements PreviewBoardA
             @Override
             public void onClick(View v)
             {
-
+                saveChanges();
             }
         });
 

@@ -26,7 +26,7 @@ public class ChangePinFragment extends DialogFragment
 
     public interface PinCallback
     {
-        void onChanged(int adapterPosition, String pinName, String pinID, String pinTags);
+        void onChanged(int adapterPosition, String pinName, String pinComment, String pinMediaUrl, String pinTags, String mediaType);
     }
 
     public void setListener(PinCallback callback)
@@ -61,8 +61,9 @@ public class ChangePinFragment extends DialogFragment
 
                 callback.onChanged
                         (adapterPosition, pin.getText().toString(),
-                                bundle.getString(Constants.KEY_PIN_ID)
-                                ,tags.getText().toString());
+                                bundle.getString(Constants.KEY_PIN_COMMENT),
+                                bundle.getString(Constants.MEDIA_URL),
+                                tags.getText().toString(), bundle.getString(Constants.MEDIA_TYPE));
 
                 dismiss();
             }

@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"/>
 
         <VideoView
+            android:layout_gravity="center"
             android:id="@+id/pinVideo"
             android:layout_width="170dp"
             android:layout_height="170dp"/>

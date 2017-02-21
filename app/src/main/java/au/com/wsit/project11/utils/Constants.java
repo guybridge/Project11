@@ -35,4 +35,7 @@ public class Constants
     public static final String BOARDS = "boards";
 
     public static final String MEDIA_TYPE = "media_type";
+    public static final String MEDIA_URL = "media_url";
+
+    public static final String DEFAULT_COVER_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/personal-pins.appspot.com/o/pins%2Fdefault.jpg?alt=media&token=aac9e73b-a8dc-40fb-a4a0-12c118840ed8";
 }

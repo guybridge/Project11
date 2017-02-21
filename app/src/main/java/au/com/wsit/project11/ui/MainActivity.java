@@ -214,8 +214,6 @@ public class MainActivity extends AppCompatActivity
 
         switch (id)
         {
-            case R.id.action_settings:
-                break;
             case R.id.action_start_camera:
                 // Start a chooser to show camera or video choice
                 startChooser();

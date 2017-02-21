@@ -21,12 +21,19 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import au.com.wsit.project11.R;
+import au.com.wsit.project11.models.Board;
 import au.com.wsit.project11.models.Pin;
 import au.com.wsit.project11.ui.LargePinActivity;
 import au.com.wsit.project11.ui.fragments.ChangePinFragment;
@@ -36,14 +43,18 @@ import au.com.wsit.project11.utils.Constants;
  * This adapter is for showing the pins within a board
  */
 
-public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
+public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder> implements ChangePinFragment.PinCallback
 {
     private static final String TAG = PinAdapter.class.getSimpleName();
     private ArrayList<Pin> pins = new ArrayList<>();
     private Context context;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     public PinAdapter(Context context)
     {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child(Constants.BOARDS);
         this.context = context;
     }
 
@@ -79,6 +90,61 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
     public int getItemCount()
     {
         return pins.size();
+    }
+
+    // Callback from changing a pin
+    @Override
+    public void onChanged(int adapterPosition, String pinName, String pinComment, String mediaUrl, String pinTags, String mediaType)
+    {
+        Log.i(TAG, "**Pin changed**");
+        Log.i(TAG, "Adapter pos: " + adapterPosition);
+        Log.i(TAG, "Pin Name: " + pinName);
+        Log.i(TAG, "Pin Comment: " + pinComment);
+        Log.i(TAG, "Pin mediaUrl: " + mediaUrl);
+        Log.i(TAG, "PinTags: " + pinTags);
+        Log.i(TAG, "Pin mediaType: " + mediaType);
+
+        Pin pin = new Pin(pinName, pinComment, pinTags, mediaUrl, mediaType);
+
+        databaseReference.addChildEventListener(new ChildEventListener()
+        {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s)
+            {
+                Log.i(TAG, "onChildAdded called");
+
+                for(DataSnapshot child : dataSnapshot.getChildren())
+                {
+                    Log.i(TAG, "Child key is: " + child.getKey());
+                }
+                //databaseReference.child(Constants.PINS).updateChildren()
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s)
+            {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot)
+            {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s)
+            {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+            }
+        });
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder
@@ -181,7 +247,7 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
                                     {
                                         case 0:
                                             // Add more tags to pin
-                                            //showEditPinDialog(getAdapterPosition(), pin.getPinID(), pin.getPinTitle(), pin.getPinTags());
+                                            showEditPinDialog(getAdapterPosition(), pin.getPinTitle(), pin.getPinComment(), pin.getMediaUrl(), pin.getPinTags(), pin.getMediaType());
                                             break;
                                         case 1:
                                             // Add pin to more boards
@@ -200,19 +266,22 @@ public class PinAdapter extends RecyclerView.Adapter<PinAdapter.ViewHolder>
 
     }
 
-    private void showEditPinDialog(int adapterPosition, String pinID, String pinName, String pinTags)
+    private void showEditPinDialog(int adapterPosition, String pinName, String pinComment, String mediaUrl, String pinTags, String mediaType)
     {
         Bundle bundle = new Bundle();
         bundle.putInt(Constants.KEY_BOARD_POSITION, adapterPosition);
-        bundle.putString(Constants.KEY_PIN_ID, pinID);
         bundle.putString(Constants.KEY_PIN_TITLE, pinName);
+        bundle.putString(Constants.MEDIA_URL, mediaUrl);
         bundle.putString(Constants.KEY_PIN_TAGS, pinTags);
+        bundle.putString(Constants.KEY_PIN_COMMENT, pinComment);
+        bundle.putString(Constants.MEDIA_TYPE, mediaType);
 
         Activity activity = (Activity) context;
         FragmentManager fm = activity.getFragmentManager();
 
         ChangePinFragment changePinFragment = new ChangePinFragment();
         changePinFragment.setArguments(bundle);
+        changePinFragment.setListener(this);
 
         changePinFragment.show(fm, "ChangePinFragment");
     }

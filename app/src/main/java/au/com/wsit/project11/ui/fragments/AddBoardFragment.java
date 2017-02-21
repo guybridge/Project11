@@ -51,6 +51,8 @@ public class AddBoardFragment extends DialogFragment implements PreviewBoardAdap
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
+    private Button saveButton;
+
     private String boardCoverUrl;
 
     // The callback from clicking on an image in the gridView
@@ -101,6 +103,7 @@ public class AddBoardFragment extends DialogFragment implements PreviewBoardAdap
 
         boardTitle = (EditText) view.findViewById(R.id.boardNameEditText);
         recyclerView = (RecyclerView) view.findViewById(R.id.previewRecycler);
+        saveButton = (Button) view.findViewById(R.id.saveButton);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         previewBoardAdapter = new PreviewBoardAdapter(getActivity(), this);
         recyclerView.setAdapter(previewBoardAdapter);
@@ -108,6 +111,23 @@ public class AddBoardFragment extends DialogFragment implements PreviewBoardAdap
         // Get an instance to Firebase to display images from the collection
         this.firebaseDatabase = FirebaseDatabase.getInstance();
         this.databaseReference = firebaseDatabase.getReference().child(Constants.BOARDS);
+
+        saveButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(boardTitle.getText().toString().equals(""))
+                {
+                    Toast.makeText(getActivity(), "Boards need a name", Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    createBoardCallback.onAddBoardSuccess(boardTitle.getText().toString(), boardCoverUrl);
+                    dismiss();
+                }
+            }
+        });
 
         getAllPins();
 
